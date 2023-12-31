@@ -1,10 +1,10 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
-public enum OptionalResultMode { NoValue, Success, Error }
+public enum OptionalDatumErrorMode { NoValue, Success, Error }
 
 [method: JsonConstructor]
 public record struct OptionalDatumError<T>(
-    OptionalResultMode Mode,
+    OptionalDatumErrorMode Mode,
     [property: AllowNull][AllowNull] NoDatum NoValue,
     [property: AllowNull][AllowNull] Datum<T> Value,
     [property: AllowNull][AllowNull] ErrorValue ErrorValue
@@ -12,73 +12,59 @@ public record struct OptionalDatumError<T>(
     : IDatum<T>
     , IOptionalValueWithError<T, OptionalDatum<T>>
     , ILogicalTimestamp {
-    //[JsonInclude]
-    //public readonly OptionalResultMode Mode;
-    //[JsonInclude]
-    //[AllowNull] public readonly T Value;
-    //[JsonInclude]
-    //[AllowNull] public readonly ErrorValue Error;
-
-    //public long LogicalTimestamp;
-
-
-    //public long LogicalTimestamp => ((this.Mode) switch => {
-    //    OptionalResultMode.=> this.LogicalTimestamp,
-    //    _=>0
-    //});
 
     public OptionalDatumError()
-        : this(OptionalResultMode.NoValue, new NoDatum(), default, default) { }
+        : this(OptionalDatumErrorMode.NoValue, new NoDatum(), default, default) { }
 
     public OptionalDatumError(T value, Meaning? meaning = default, long logicalTimestamp = 0)
-        : this(OptionalResultMode.Success, default, new Datum<T>(value, meaning, logicalTimestamp), default) {
+        : this(OptionalDatumErrorMode.Success, default, new Datum<T>(value, meaning, logicalTimestamp), default) {
     }
 
-    public OptionalDatumError(NoDatum value) : this(OptionalResultMode.NoValue, value, default, default) { }
+    public OptionalDatumError(NoDatum value) : this(OptionalDatumErrorMode.NoValue, value, default, default) { }
 
-    public OptionalDatumError(Datum<T> value) : this(OptionalResultMode.Success, default, value, default) { }
+    public OptionalDatumError(Datum<T> value) : this(OptionalDatumErrorMode.Success, default, value, default) { }
 
-    public OptionalDatumError(ErrorValue errorValue) : this(OptionalResultMode.Error, default, default, errorValue) { }
+    public OptionalDatumError(ErrorValue errorValue) : this(OptionalDatumErrorMode.Error, default, default, errorValue) { }
 
     //T IValue<T>.Value => this.Value;
     readonly T IDatum<T>.Value => this.Mode switch {
-        OptionalResultMode.NoValue => throw new NoValueAccessingException(),
-        OptionalResultMode.Success => this.Value.Value,
-        OptionalResultMode.Error => this.ErrorValue.ThrowNotReturn<T>(),
+        OptionalDatumErrorMode.NoValue => throw new NoValueAccessingException(),
+        OptionalDatumErrorMode.Success => this.Value.Value,
+        OptionalDatumErrorMode.Error => this.ErrorValue.ThrowNotReturn<T>(),
         _ => default!
     };
 
     public readonly Meaning? Meaning => (this.Mode) switch {
-        OptionalResultMode.NoValue => this.NoValue.Meaning,
-        OptionalResultMode.Success => this.Value.Meaning,
-        OptionalResultMode.Error => this.ErrorValue.Meaning,
+        OptionalDatumErrorMode.NoValue => this.NoValue.Meaning,
+        OptionalDatumErrorMode.Success => this.Value.Meaning,
+        OptionalDatumErrorMode.Error => this.ErrorValue.Meaning,
         _ => default
     };
 
     public readonly long LogicalTimestamp => (this.Mode) switch {
-        OptionalResultMode.NoValue => this.NoValue.LogicalTimestamp,
-        OptionalResultMode.Success => this.Value.LogicalTimestamp,
-        OptionalResultMode.Error => this.ErrorValue.LogicalTimestamp,
+        OptionalDatumErrorMode.NoValue => this.NoValue.LogicalTimestamp,
+        OptionalDatumErrorMode.Success => this.Value.LogicalTimestamp,
+        OptionalDatumErrorMode.Error => this.ErrorValue.LogicalTimestamp,
         _ => 0
     };
 
     // TODO: better?    OptionalErrorValue
-    public readonly void Deconstruct(out OptionalResultMode mode, out T? value, out OptionalErrorValue error, out long logicalTimestamp) {
+    public readonly void Deconstruct(out OptionalDatumErrorMode mode, out T? value, out OptionalErrorValue error, out long logicalTimestamp) {
         switch (this.Mode) {
-            case OptionalResultMode.Success:
-                mode = OptionalResultMode.Success;
+            case OptionalDatumErrorMode.Success:
+                mode = OptionalDatumErrorMode.Success;
                 value = this.Value;
                 error = default;
                 logicalTimestamp = this.LogicalTimestamp;
                 return;
-            case OptionalResultMode.Error:
-                mode = OptionalResultMode.Error;
+            case OptionalDatumErrorMode.Error:
+                mode = OptionalDatumErrorMode.Error;
                 value = default;
                 error = this.ErrorValue;
                 logicalTimestamp = this.ErrorValue.LogicalTimestamp;
                 return;
             default:
-                mode = OptionalResultMode.NoValue;
+                mode = OptionalDatumErrorMode.NoValue;
                 value = default;
                 error = default;
                 logicalTimestamp = this.LogicalTimestamp;
@@ -87,11 +73,11 @@ public record struct OptionalDatumError<T>(
     }
 
     public readonly bool TryGetNoValue() {
-        if (this.Mode == OptionalResultMode.NoValue) {
+        if (this.Mode == OptionalDatumErrorMode.NoValue) {
             return true;
-        } else if (this.Mode == OptionalResultMode.Success) {
+        } else if (this.Mode == OptionalDatumErrorMode.Success) {
             return false;
-        } else if (this.Mode == OptionalResultMode.Error) {
+        } else if (this.Mode == OptionalDatumErrorMode.Error) {
             return false;
         } else {
             return true;
@@ -99,7 +85,7 @@ public record struct OptionalDatumError<T>(
     }
 
     public readonly bool TryGetNoValue([MaybeNullWhen(true)] out T value) {
-        if (this.Mode == OptionalResultMode.Success) {
+        if (this.Mode == OptionalDatumErrorMode.Success) {
             value = this.Value!;
             return false;
         } else {
@@ -109,7 +95,7 @@ public record struct OptionalDatumError<T>(
     }
 
     public readonly bool TryGetValue([MaybeNullWhen(false)] out T value) {
-        if (this.Mode == OptionalResultMode.Success) {
+        if (this.Mode == OptionalDatumErrorMode.Success) {
             value = this.Value!;
             return true;
         } else {
@@ -119,7 +105,7 @@ public record struct OptionalDatumError<T>(
     }
 
     public readonly bool TryGetError([MaybeNullWhen(false)] out ErrorValue error) {
-        if (this.Mode == OptionalResultMode.Error) {
+        if (this.Mode == OptionalDatumErrorMode.Error) {
             System.Diagnostics.Debug.Assert(this.ErrorValue.Exception is not null);
             error = this.ErrorValue!;
             return true;
@@ -132,11 +118,11 @@ public record struct OptionalDatumError<T>(
     public readonly bool TryGetError(
         [MaybeNullWhen(false)] out ErrorValue errorValue,
         [MaybeNullWhen(true)] out OptionalDatum<T> value) {
-        if (this.Mode == OptionalResultMode.Error) {
+        if (this.Mode == OptionalDatumErrorMode.Error) {
             errorValue = this.ErrorValue!;
             value = default;
             return true;
-        } else if (this.Mode == OptionalResultMode.Success) {
+        } else if (this.Mode == OptionalDatumErrorMode.Success) {
             errorValue = default;
             value = new OptionalDatum<T>(OptionalDatumMode.Success, default, this.Value);
             return false;
@@ -154,23 +140,24 @@ public record struct OptionalDatumError<T>(
     public readonly OptionalDatumError<T> WithError(ErrorValue error) => new OptionalDatumError<T>(error);
 
 
-    public static implicit operator bool(OptionalDatumError<T> that) => that.Mode == OptionalResultMode.Success;
+    public static implicit operator bool(OptionalDatumError<T> that) => that.Mode == OptionalDatumErrorMode.Success;
 
-    public static bool operator true(OptionalDatumError<T> that) => that.Mode == OptionalResultMode.Success;
+    public static bool operator true(OptionalDatumError<T> that) => that.Mode == OptionalDatumErrorMode.Success;
 
-    public static bool operator false(OptionalDatumError<T> that) => that.Mode != OptionalResultMode.Success;
+    public static bool operator false(OptionalDatumError<T> that) => that.Mode != OptionalDatumErrorMode.Success;
 
-    public static explicit operator T(OptionalDatumError<T> that) => (that.Mode == OptionalResultMode.Success) ? that.Value : throw new InvalidCastException();
+    public static explicit operator T(OptionalDatumError<T> that) => (that.Mode == OptionalDatumErrorMode.Success) ? that.Value : throw new InvalidCastException();
 
-    public static explicit operator ErrorValue(OptionalDatumError<T> that) => (that.Mode == OptionalResultMode.Error) ? that.ErrorValue : throw new InvalidCastException();
+    public static explicit operator ErrorValue(OptionalDatumError<T> that) => (that.Mode == OptionalDatumErrorMode.Error) ? that.ErrorValue : throw new InvalidCastException();
 
     public static implicit operator OptionalDatumError<T>(NoDatum noValue) => new OptionalDatumError<T>();
+    public static implicit operator OptionalDatumError<T>(Datum<T> value) => new OptionalDatumError<T>(OptionalDatumErrorMode.Success, default, value, default);
+    public static implicit operator OptionalDatumError<T>(ErrorValue error) => new OptionalDatumError<T>(OptionalDatumErrorMode.Error, default, default, error);
 
     public static implicit operator OptionalDatumError<T>(T value) => new OptionalDatumError<T>(value);
 
     public static implicit operator OptionalDatumError<T>(Exception error) => new OptionalDatumError<T>(new ErrorValue(error, default, default, 0, false));
 
-    public static implicit operator OptionalDatumError<T>(ErrorValue error) => new OptionalDatumError<T>(error);
 
     public static implicit operator OptionalDatumError<T>(DatumError<T> value) {
         if (value.TryGetValue(out var successValue)) {

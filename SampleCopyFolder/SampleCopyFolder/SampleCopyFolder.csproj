@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Cocona" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
@@ -19,6 +20,11 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="OpenTelemetry.Api" />
     <PackageReference Include="OpenTelemetry.Exporter.InMemory" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Brimborium.FileSystem\Brimborium.FileSystem.csproj" />
+    <ProjectReference Include="..\..\Brimborium.TheMeaningOfLiff\Brimborium.TheMeaningOfLiff.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,31 +3,30 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brimborium.TheMeaningOfLiff", "Brimborium.TheMeaningOfLiff\Brimborium.TheMeaningOfLiff.csproj", "{4AA7CFDA-9ED3-42AF-9BB3-12E1EB3BF3CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Brimborium.TheMeaningOfLiff", "Brimborium.TheMeaningOfLiff\Brimborium.TheMeaningOfLiff.csproj", "{4AA7CFDA-9ED3-42AF-9BB3-12E1EB3BF3CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brimborium.TheMeaningOfLiff.Test", "Brimborium.TheMeaningOfLiff.Test\Brimborium.TheMeaningOfLiff.Test.csproj", "{188E45E0-5187-45C2-8291-437F3F54E161}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Brimborium.TheMeaningOfLiff.Test", "Brimborium.TheMeaningOfLiff.Test\Brimborium.TheMeaningOfLiff.Test.csproj", "{188E45E0-5187-45C2-8291-437F3F54E161}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{D931CC46-46E2-48FF-B45E-C619BDDA9734}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ServiceDefaults", "Sample\Sample.ServiceDefaults\Sample.ServiceDefaults.csproj", "{A6107317-75CD-4D47-A702-EE375FC12697}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ServiceDefaults", "Sample\Sample.ServiceDefaults\Sample.ServiceDefaults.csproj", "{A6107317-75CD-4D47-A702-EE375FC12697}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ApiService", "Sample\Sample.ApiService\Sample.ApiService.csproj", "{0A359796-9233-4D81-BE2F-D89B80F73820}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ApiService", "Sample\Sample.ApiService\Sample.ApiService.csproj", "{0A359796-9233-4D81-BE2F-D89B80F73820}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.AppHost", "Sample\Sample.AppHost\Sample.AppHost.csproj", "{1C431FC8-6717-47EC-84B4-525720940361}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.AppHost", "Sample\Sample.AppHost\Sample.AppHost.csproj", "{1C431FC8-6717-47EC-84B4-525720940361}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Web", "Sample\Sample.Web\Sample.Web.csproj", "{DEF7044C-E6F7-453D-8BA2-12904EF1D642}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Web", "Sample\Sample.Web\Sample.Web.csproj", "{DEF7044C-E6F7-453D-8BA2-12904EF1D642}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleCopyFolder", "SampleCopyFolder", "{B1DCE974-3280-4910-85B8-3014338A888D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleCopyFolder", "SampleCopyFolder\SampleCopyFolder\SampleCopyFolder.csproj", "{88D32CE3-56CD-47D4-924F-5EB3CA8CA818}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleCopyFolder", "SampleCopyFolder\SampleCopyFolder\SampleCopyFolder.csproj", "{88D32CE3-56CD-47D4-924F-5EB3CA8CA818}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brimborium.FileSystem", "Brimborium.FileSystem\Brimborium.FileSystem.csproj", "{34300BBB-F4FB-4AF7-9036-614EDEE5F4A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4AA7CFDA-9ED3-42AF-9BB3-12E1EB3BF3CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,6 +57,13 @@ Global
 		{88D32CE3-56CD-47D4-924F-5EB3CA8CA818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88D32CE3-56CD-47D4-924F-5EB3CA8CA818}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88D32CE3-56CD-47D4-924F-5EB3CA8CA818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34300BBB-F4FB-4AF7-9036-614EDEE5F4A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34300BBB-F4FB-4AF7-9036-614EDEE5F4A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34300BBB-F4FB-4AF7-9036-614EDEE5F4A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34300BBB-F4FB-4AF7-9036-614EDEE5F4A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A6107317-75CD-4D47-A702-EE375FC12697} = {D931CC46-46E2-48FF-B45E-C619BDDA9734}
@@ -65,5 +71,8 @@ Global
 		{1C431FC8-6717-47EC-84B4-525720940361} = {D931CC46-46E2-48FF-B45E-C619BDDA9734}
 		{DEF7044C-E6F7-453D-8BA2-12904EF1D642} = {D931CC46-46E2-48FF-B45E-C619BDDA9734}
 		{88D32CE3-56CD-47D4-924F-5EB3CA8CA818} = {B1DCE974-3280-4910-85B8-3014338A888D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0EF099D1-6972-422A-B9E5-64814ADDEE23}
 	EndGlobalSection
 EndGlobal

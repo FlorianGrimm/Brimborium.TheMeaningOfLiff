@@ -59,9 +59,9 @@ public readonly record struct ErrorValue(
 
     public static ErrorValue Uninitialized => ErrorValueInstance.GetUninitialized();
 
-    public static ErrorValue CreateFromCatchedException(Exception exception) {
+    public static ErrorValue CreateFromCatchedException(Exception exception, Meaning? meaning = default, long logicalTimestamp = 0) {
         var exceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception);
-        return new ErrorValue(exception, exceptionDispatchInfo, default, 0, false);
+        return new ErrorValue(exception, exceptionDispatchInfo, meaning, logicalTimestamp, false);
     }
 
     public static Exception GetAndSetIsLogged(ref ErrorValue that) {

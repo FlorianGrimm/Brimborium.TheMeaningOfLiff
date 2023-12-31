@@ -1,17 +1,22 @@
+using System.Security.Cryptography;
+
 namespace Brimborium.TheMeaningOfLiff;
 
-public enum DatumErrorMode { Success, Error }
+public enum DatumErrorMode {
+    NotInit,
+    Success,
+    Error
+}
 
 [method: JsonConstructor]
 public readonly record struct DatumError<T>(
     DatumErrorMode Mode,
     [property: AllowNull][AllowNull] Datum<T> Value,
     [property: AllowNull][AllowNull] ErrorValue ErrorValue
-    ) 
-    : IDatumWithError<T, Datum<T>> 
+    )
+    : IDatumWithError<T, Datum<T>>
     , IWithMeaning
-    , ILogicalTimestamp 
-    {
+    , ILogicalTimestamp {
     public DatumError(T value, Meaning? meaning = default, long logicalTimestamp = 0)
         : this(DatumErrorMode.Success, new Datum<T>(value, meaning, logicalTimestamp), default) {
     }
@@ -20,9 +25,20 @@ public readonly record struct DatumError<T>(
         : this(DatumErrorMode.Error, default, errorValue) {
     }
 
-    public readonly Meaning? Meaning => this.Mode == DatumErrorMode.Success ? this.Value.Meaning : this.ErrorValue.Meaning;
-    public readonly long LogicalTimestamp => this.Mode == DatumErrorMode.Success ? this.Value.LogicalTimestamp : this.ErrorValue.LogicalTimestamp;
+    //public readonly Meaning? Meaning => this.Mode == DatumErrorMode.Success ? this.Value.Meaning : this.ErrorValue.Meaning;
+    public readonly Meaning? Meaning
+        => this.Mode switch {
+            DatumErrorMode.Success => this.Value.Meaning,
+            DatumErrorMode.Error => this.ErrorValue.Meaning,
+            _ => default
+        };
 
+    public readonly long LogicalTimestamp 
+        => this.Mode switch {
+            DatumErrorMode.Success => this.Value.LogicalTimestamp,
+            DatumErrorMode.Error => this.ErrorValue.LogicalTimestamp,
+            _ => 0
+        };
 
     /// <summary>
     /// Tries to get the value or error value.
@@ -37,9 +53,13 @@ public readonly record struct DatumError<T>(
             value = this.Value;
             errorValue = default;
             return true;
-        } else {
+        } else if (this.Mode == DatumErrorMode.Error) {
             value = default;
             errorValue = this.ErrorValue;
+            return false;
+        } else {
+            value = default;
+            errorValue = new ErrorValue(new UninitializedException(), default, this.Meaning, this.LogicalTimestamp, false);
             return false;
         }
     }
@@ -87,6 +107,10 @@ public readonly record struct DatumError<T>(
             error = this.ErrorValue;
             value = default;
             return true;
+        } else if (this.Mode == DatumErrorMode.NotInit) {
+            error = new ErrorValue(new UninitializedException(), default, this.Meaning, this.LogicalTimestamp, false);
+            value = default;
+            return true;
         } else {
             error = default;
             value = this.Value;
@@ -104,7 +128,7 @@ public readonly record struct DatumError<T>(
             value = default;
             return true;
         } else {
-            error = new ErrorValue(new NoValueAccessingException(), default, this.Meaning, this.LogicalTimestamp, false);
+            error = new ErrorValue(new UninitializedException(), default, this.Meaning, this.LogicalTimestamp, false);
             value = default;
             return true;
         }
