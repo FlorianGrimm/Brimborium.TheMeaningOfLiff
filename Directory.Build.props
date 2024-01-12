@@ -1,5 +1,5 @@
 <Project>
     <PropertyGroup>
-        <UsedTargetFramework>net7.0</UsedTargetFramework>
+        <UsedTargetFramework>net8.0</UsedTargetFramework>
     </PropertyGroup>
 </Project>
