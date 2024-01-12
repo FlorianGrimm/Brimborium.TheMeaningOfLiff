@@ -1,6 +1,6 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
-public static partial class DatumExtension {
+public static partial class Datum {
     public static OptionalDatum<T> AsOptional<T>(
         this T value, 
         Meaning? meaning = default,

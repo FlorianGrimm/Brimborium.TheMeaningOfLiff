@@ -1,13 +1,20 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
-public static partial class DatumExtension {
+public static partial class Datum {
     public static NoDatum NoValue => new NoDatum();
+    public static Datum<T> Create<T>(this T value, Meaning? meaning = default, long logicalTimestamp = 0)
+        => new Datum<T>(value, meaning, logicalTimestamp);
 
-    public static Datum<T> AsSuccessValue<T>(this T that)
-        => new Datum<T>(that, default, 0);
+    public static Datum<T> AsSuccessValue<T>(this T that, Meaning? meaning = default, long logicalTimestamp = 0)
+        => new Datum<T>(that, meaning, logicalTimestamp);
 
-    public static ErrorValue AsErrorValue(this Exception that)
-        => new ErrorValue(that, default, default, 0, false);
+    public static ErrorValue AsErrorValue(this Exception that,
+        ExceptionDispatchInfo? ExceptionDispatchInfo = default,
+        Meaning? Meaning = default,
+        long LogicalTimestamp = 0,
+        bool IsLogged = false
+        )
+        => new ErrorValue(that, ExceptionDispatchInfo, Meaning, LogicalTimestamp, IsLogged);
 
     public static DatumError<T> AsResult<T>(this T that)
         => new DatumError<T>(DatumErrorMode.Success, new Datum<T>(that), default);

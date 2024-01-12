@@ -8,6 +8,20 @@ public enum DatumErrorMode {
     Error
 }
 
+public static class DatumError {
+    public static DatumError<T> Create<T>(T value, Meaning? meaning = default, long logicalTimestamp = 0)
+        => new DatumError<T>(value, meaning, logicalTimestamp);
+
+    public static DatumError<T> CreateNotNull<T>([AllowNull]T value, Meaning? meaning = default, long logicalTimestamp = 0)
+        where T : class {
+        if (value is null) {
+            return new DatumError<T>(new ErrorValue(new ArgumentNullException(nameof(value)), default, meaning, logicalTimestamp));
+        } else { 
+            return new DatumError<T>(value, meaning, logicalTimestamp);
+        }
+    }
+}
+
 [method: JsonConstructor]
 public readonly record struct DatumError<T>(
     DatumErrorMode Mode,
@@ -146,7 +160,7 @@ public readonly record struct DatumError<T>(
     public static implicit operator ResultRec<T>(Exception error) => new ResultRec<T>(new ErrorValue(error, default, default, 0, false));
 
     */
-    public static implicit operator DatumError<T>(Datum<T> successValue) => new DatumError<T>(successValue);
-    public static implicit operator DatumError<T>(ErrorValue errorValue) => new DatumError<T>(errorValue);
+    public static implicit operator DatumError<T>(Datum<T> successValue) => new DatumError<T>(DatumErrorMode.Success, successValue, default);
+    public static implicit operator DatumError<T>(ErrorValue errorValue) => new DatumError<T>(DatumErrorMode.Error, default!, errorValue);
 
 }

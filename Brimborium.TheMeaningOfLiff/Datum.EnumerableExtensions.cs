@@ -1,6 +1,6 @@
 namespace Brimborium.TheMeaningOfLiff;
 
-public static partial class DatumExtension
+public static partial class Datum
 {
     public static IEnumerable<R> SelectWhere<T,R>(this IEnumerable<T> source, Func<T, OptionalDatum<R>> predicateTransform) {
         foreach (var item in source) {

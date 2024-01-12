@@ -3,7 +3,7 @@
 /// <summary>
 /// Extensions for <see cref="OptionalDatumError{T}"/>
 /// </summary>
-public static partial class DatumExtension {
+public static partial class Datum {
     /// <summary>
     /// 
     /// </summary>
