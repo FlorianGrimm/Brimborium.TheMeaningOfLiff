@@ -27,7 +27,7 @@ public interface IOptionalDatum<T> {
 }
 
 public interface IWithError {
-    bool TryGetError([MaybeNullWhen(false)] out ErrorValue error);
+    bool TryGetError([MaybeNullWhen(false)] out ErrorDatum error);
 }
 
 public interface IDatumWithError<T, R> : IWithError
@@ -36,7 +36,7 @@ public interface IDatumWithError<T, R> : IWithError
     // bool TryGetError([MaybeNullWhen(false)] out ErrorValue error);
 
     bool TryGetError(
-            [MaybeNullWhen(false)] out ErrorValue error,
+            [MaybeNullWhen(false)] out ErrorDatum error,
             [MaybeNullWhen(true)] out R value);
 }
 
@@ -46,7 +46,7 @@ public interface IOptionalValueWithError<T, R> : IWithError
     // bool TryGetError([MaybeNullWhen(false)] out ErrorValue error);
 
     bool TryGetError(
-            [MaybeNullWhen(false)] out ErrorValue error,
+            [MaybeNullWhen(false)] out ErrorDatum error,
             [MaybeNullWhen(true)] out R value);
 }
 

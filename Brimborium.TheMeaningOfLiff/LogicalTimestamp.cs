@@ -1,12 +1,13 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
+[DebuggerNonUserCode]
 [DebuggerDisplay($"{{{nameof(ToString)}(),nq}}")]
-public readonly struct LogicalTimestamp :
-    IEquatable<LogicalTimestamp>,
-    IComparable<LogicalTimestamp> {
+public readonly struct NamedLogicalTimestamp :
+    IEquatable<NamedLogicalTimestamp>,
+    IComparable<NamedLogicalTimestamp> {
     public readonly long Ticks;
 
-    public LogicalTimestamp(long value, string? name = default) {
+    public NamedLogicalTimestamp(long value, string? name = default) {
         this.Ticks = value;
         this.Name = name;
     }
@@ -18,42 +19,48 @@ public readonly struct LogicalTimestamp :
     public override int GetHashCode() => this.Ticks.GetHashCode();
 
     public override bool Equals([AllowNull] object obj)
-        => (obj is LogicalTimestamp logicalTimestamp)
+        => (obj is NamedLogicalTimestamp logicalTimestamp)
         ? (this.Ticks == logicalTimestamp.Ticks)
         : false;
 
-    public bool Equals(LogicalTimestamp other)
+    public bool Equals(NamedLogicalTimestamp other)
         => (this.Ticks == other.Ticks);
 
-    public int CompareTo(LogicalTimestamp other)
+    public int CompareTo(NamedLogicalTimestamp other)
         => this.Ticks.CompareTo(other.Ticks);
 
     public override string ToString() => this.Ticks.ToString();
 
-    public static LogicalTimestamp operator +(LogicalTimestamp that)
-        => new LogicalTimestamp(that.Ticks, that.Name);
+    public static NamedLogicalTimestamp operator +(NamedLogicalTimestamp that)
+        => new NamedLogicalTimestamp(that.Ticks, that.Name);
 
-    public static LogicalTimestamp operator +(LogicalTimestamp a, LogicalTimestamp b)
+    public static NamedLogicalTimestamp operator +(NamedLogicalTimestamp a, NamedLogicalTimestamp b)
         => (a.Value >= b.Value)
             ? a
             : b;
 
-    public static LogicalTimestamp operator *(LogicalTimestamp a, LogicalTimestamp b)
+    public static NamedLogicalTimestamp operator *(NamedLogicalTimestamp a, NamedLogicalTimestamp b)
         => (a.Value >= b.Value)
-            ? new LogicalTimestamp(a.Ticks + 1, a.Name ?? b.Name)
-            : new LogicalTimestamp(b.Ticks + 1, b.Name ?? a.Name);
+            ? new NamedLogicalTimestamp(a.Ticks + 1, a.Name ?? b.Name)
+            : new NamedLogicalTimestamp(b.Ticks + 1, b.Name ?? a.Name);
 
-    public static bool operator ==(LogicalTimestamp left, LogicalTimestamp right) => left.Equals(right);
+    public static bool operator ==(NamedLogicalTimestamp left, NamedLogicalTimestamp right) => left.Equals(right);
 
-    public static bool operator !=(LogicalTimestamp left, LogicalTimestamp right) => !(left == right);
+    public static bool operator !=(NamedLogicalTimestamp left, NamedLogicalTimestamp right) => !(left == right);
 
-    public static bool operator <(LogicalTimestamp left, LogicalTimestamp right) => left.CompareTo(right) < 0;
+    public static bool operator <(NamedLogicalTimestamp left, NamedLogicalTimestamp right) => left.CompareTo(right) < 0;
 
-    public static bool operator <=(LogicalTimestamp left, LogicalTimestamp right) => left.CompareTo(right) <= 0;
+    public static bool operator <=(NamedLogicalTimestamp left, NamedLogicalTimestamp right) => left.CompareTo(right) <= 0;
 
-    public static bool operator >(LogicalTimestamp left, LogicalTimestamp right) => left.CompareTo(right) > 0;
+    public static bool operator >(NamedLogicalTimestamp left, NamedLogicalTimestamp right) => left.CompareTo(right) > 0;
 
-    public static bool operator >=(LogicalTimestamp left, LogicalTimestamp right) => left.CompareTo(right) >= 0;
+    public static bool operator >=(NamedLogicalTimestamp left, NamedLogicalTimestamp right) => left.CompareTo(right) >= 0;
 
-    public static LogicalTimestamp operator ++(LogicalTimestamp that) => new LogicalTimestamp(that.Ticks + 1, that.Name);
+    public static NamedLogicalTimestamp operator ++(NamedLogicalTimestamp that) => new NamedLogicalTimestamp(that.Ticks + 1, that.Name);
+}
+
+public static class LogicalTimestampUtility { 
+    [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long Next(long thatLogicalTimestamp, long argLogicalTimestamp)
+        => (argLogicalTimestamp == 0) ? thatLogicalTimestamp : argLogicalTimestamp;
 }

@@ -1,73 +1,89 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
+[DebuggerNonUserCode]
 public static partial class Datum {
-    public static NoDatum NoValue => new NoDatum();
-    public static Datum<T> Create<T>(this T value, Meaning? meaning = default, long logicalTimestamp = 0)
-        => new Datum<T>(value, meaning, logicalTimestamp);
+    public static NoDatum NoDatum(string? meaning = default, long logicalTimestamp = 0) => new NoDatum(meaning, logicalTimestamp);
 
-    public static Datum<T> AsSuccessValue<T>(this T that, Meaning? meaning = default, long logicalTimestamp = 0)
-        => new Datum<T>(that, meaning, logicalTimestamp);
+    public static ValueDatum<T> AsValueDatum<T>(this T value, string? meaning = default, long logicalTimestamp = 0)
+        => new ValueDatum<T>(value, meaning, logicalTimestamp);
 
-    public static ErrorValue AsErrorValue(this Exception that,
+    public static ErrorDatum AsErrorDatum(this Exception that,
         ExceptionDispatchInfo? ExceptionDispatchInfo = default,
-        Meaning? Meaning = default,
+        string? Meaning = default,
         long LogicalTimestamp = 0,
         bool IsLogged = false
         )
-        => new ErrorValue(that, ExceptionDispatchInfo, Meaning, LogicalTimestamp, IsLogged);
+        => new ErrorDatum(that, ExceptionDispatchInfo, Meaning, LogicalTimestamp, IsLogged);
 
-    public static DatumError<T> AsResult<T>(this T that)
-        => new DatumError<T>(DatumErrorMode.Success, new Datum<T>(that), default);
+    public static ValueErrorDatum<T> AsDatumError<T>(this T that)
+        => new ValueErrorDatum<T>(ValueErrorDatumMode.Success, new ValueDatum<T>(that), default);
 
-    public static DatumError<T> AsResult<T>(this Datum<T> that)
-        => new DatumError<T>(DatumErrorMode.Success, that.Value, default);
+    public static ValueErrorDatum<T> AsDatumError<T>(this ValueDatum<T> that, string? meaning = default, long logicalTimestamp = 0)
+        => new ValueErrorDatum<T>(ValueErrorDatumMode.Success, that.Value.AsValueDatum(meaning ?? that.Meaning, LogicalTimestampUtility.Next(that.LogicalTimestamp, logicalTimestamp)), default);
 
-    public static DatumError<T> AsResult<T>(this OptionalDatumError<T> that) {
+    public static ValueErrorDatum<T> AsDatumError<T>(this OptionalValueErrorDatum<T> that, string? meaning = default, long logicalTimestamp = 0) {
         if (that.TryGetValue(out var successValue)) {
-            return new DatumError<T>(successValue);
+            return new ValueErrorDatum<T>(successValue.AsValueDatum(meaning ?? that.Meaning, LogicalTimestampUtility.Next(that.LogicalTimestamp, logicalTimestamp)));
         } else if (that.TryGetError(out var errorValue)) {
-            return new DatumError<T>(errorValue);
+            return new ValueErrorDatum<T>(ValueErrorDatumMode.Error, default, errorValue);
         }
-        return new DatumError<T>(new UninitializedException());
+        return new ValueErrorDatum<T>(ValueErrorDatumMode.Error, default, new UninitializedException());
     }
 
-    public static DatumError<T> AsResult<T>(this Exception that)
-        => new DatumError<T>(that);
+    public static ValueErrorDatum<T> AsDatumError<T>(this Exception that)
+        => new ValueErrorDatum<T>(ValueErrorDatumMode.Error, default, new ErrorDatum(that));
 
-    public static DatumError<T> AsResult<T>(this ErrorValue that)
-        => new DatumError<T>(that);
+    public static ValueErrorDatum<T> AsDatumError<T>(this ErrorDatum that)
+        => new ValueErrorDatum<T>(ValueErrorDatumMode.Error, default, that);
 
 
-    public static OptionalDatumError<T> AsOptionalResult<T>(this NoDatum that)
-        => new OptionalDatumError<T>();
+#pragma warning disable IDE0060 // Remove unused parameter
+    public static OptionalValueErrorDatum<T> AsOptionalDatumError<T>(this NoDatum that)
+        => new OptionalValueErrorDatum<T>();
+#pragma warning restore IDE0060 // Remove unused parameter
 
-    public static OptionalDatumError<T> AsOptionalResult<T>(this T that)
-        => new OptionalDatumError<T>(that);
+    public static OptionalValueErrorDatum<T> AsOptionalDatumError<T>(this T that)
+        => new OptionalValueErrorDatum<T>(that);
 
-    public static OptionalDatumError<T> AsOptionalResult<T>(this Datum<T> that)
-        => new OptionalDatumError<T>(that.Value);
+    public static OptionalValueErrorDatum<T> AsOptionalDatumError<T>(this ValueDatum<T> that)
+        => new OptionalValueErrorDatum<T>(that.Value);
 
-    public static OptionalDatumError<T> AsOptionalResult<T>(this Exception that)
-        => new OptionalDatumError<T>(that);
+    public static OptionalValueErrorDatum<T> AsOptionalDatumError<T>(this Exception that)
+        => new OptionalValueErrorDatum<T>(that);
 
-    public static OptionalDatumError<T> AsOptionalResult<T>(this ErrorValue value)
-        => new OptionalDatumError<T>(value);
+    public static OptionalValueErrorDatum<T> AsOptionalDatumError<T>(this ErrorDatum value)
+        => new OptionalValueErrorDatum<T>(value);
 
-    public static OptionalDatumError<T> AsOptionalResult<T>(this DatumError<T> that) {
+    public static OptionalValueErrorDatum<T> AsOptionalDatumError<T>(this ValueErrorDatum<T> that) {
         if (that.TryGetValue(out var successValue)) {
-            return new OptionalDatumError<T>(successValue);
+            return new OptionalValueErrorDatum<T>(successValue);
         } else if (that.TryGetError(out var errorValue)) {
-            return new OptionalDatumError<T>(errorValue);
+            return new OptionalValueErrorDatum<T>(errorValue);
         } else {
-            return new OptionalDatumError<T>(new InvalidEnumArgumentException($"Invalid enum {that.Mode}."));
+            return new OptionalValueErrorDatum<T>(new InvalidEnumArgumentException($"Invalid enum {that.Mode}."));
         }
     }
 
-    public static DatumError<T> TryCatch<T, A>(this A arg, Func<A, DatumError<T>> fn) {
-        try {
-            return fn(arg);
-        } catch (Exception error) {
-            return new DatumError<T>(error);
-        }
+
+}
+
+#if UnitTest
+public partial class DatumTest {
+    record A(string Name);
+    record B(string Name) : A(Name);
+
+    [Fact]
+    public void NamingTest() {
+        var noValue=Datum.NoDatum("a");
+        Assert.Equal("a", noValue.Meaning);
+
+        var valueDatum = Datum.AsValueDatum(42, "b");
+        Assert.Equal(42, valueDatum.Value);
+        Assert.Equal("b", valueDatum.Meaning);
+
+        var errorDatum = Datum.AsErrorDatum(new Exception(), default, "c");
+        Assert.IsType<Exception>(errorDatum.Exception);
+        Assert.Equal("c", errorDatum.Meaning);
     }
 }
+#endif
