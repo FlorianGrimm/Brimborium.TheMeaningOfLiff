@@ -66,15 +66,15 @@ public readonly partial record struct OptionalFailureErrorDatum<F>(
     [property: AllowNull][AllowNull] ErrorDatum ErrorDatum
     ) {
 
-    public bool TryGetNoDatum(out NoDatum noDatum, out ValueFailureErrorDatum<V, F> elseDatum) {
-        throw new NotImplementedException();
-    }
-    public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out OptionalValueErrorDatum<V> elseDatum) {
-        throw new UninitializedException();
-    }
-    public bool TryGetErrorDatum(out ErrorDatum errorDatum, out OptionalValueFailureDatum<V, F> elseDatum) {
-        throw new UninitializedException();
-    }
+    //public bool TryGetNoDatum(out NoDatum noDatum, out ValueFailureErrorDatum<V, F> elseDatum) {
+    //    throw new NotImplementedException();
+    //}
+    //public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out OptionalValueErrorDatum<V> elseDatum) {
+    //    throw new UninitializedException();
+    //}
+    //public bool TryGetErrorDatum(out ErrorDatum errorDatum, out OptionalValueFailureDatum<V, F> elseDatum) {
+    //    throw new UninitializedException();
+    //}
 }
 
 public enum OptionalValueFailureDatumMode { NoValue, Success, Failure }
