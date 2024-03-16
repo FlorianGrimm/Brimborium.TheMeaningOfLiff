@@ -1,7 +1,7 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
 [DebuggerNonUserCode]
-public readonly partial record struct ValueDatum<T>(
+public readonly partial record struct ValueDatum<V>(
     T Value,
     string? Meaning = default,
     long LogicalTimestamp = 0)
