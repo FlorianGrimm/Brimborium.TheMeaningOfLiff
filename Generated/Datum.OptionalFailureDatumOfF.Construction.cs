@@ -11,7 +11,7 @@ public static partial class Datum {
         );
     }
     public static OptionalFailureDatum<F> AsOptionalFailureDatum<F>(
-        this FailureDatum<F> failure
+        this FailureDatumOfF<F> failure
     ) {
         return new OptionalFailureDatum<F>(
            OptionalFailureMode.Failure,

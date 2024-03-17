@@ -22,7 +22,7 @@ public static partial class Datum {
         );
     }
     public static OptionalValueFailureDatum<V, F> AsOptionalValueFailureDatum<V, F>(
-        this FailureDatum<F> failure
+        this FailureDatumOfF<F> failure
     ) {
         return new OptionalValueFailureDatum<V, F>(
            OptionalValueFailureMode.Failure,

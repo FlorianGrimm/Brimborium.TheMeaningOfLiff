@@ -2,7 +2,7 @@ namespace Brimborium.TheMeaningOfLiff;
 
 public static partial class Datum {
     public static FailureErrorDatum<F> AsFailureErrorDatum<F>(
-        this FailureDatum<F> failure
+        this FailureDatumOfF<F> failure
     ) {
         return new FailureErrorDatum<F>(
            FailureErrorMode.Failure,

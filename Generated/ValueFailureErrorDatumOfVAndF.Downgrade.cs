@@ -31,7 +31,7 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failure){
+    public bool TryGetFailure(out FailureDatumOfF<F> failure){
         if (this.Mode == ValueFailureErrorMode.Failure) {
             failure = this.Failure;
             return true;
@@ -41,7 +41,7 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failureDatum, out ValueErrorDatum<V> valueErrorDatum){
+    public bool TryGetFailure(out FailureDatumOfF<F> failureDatum, out ValueErrorDatum<V> valueErrorDatum){
         if (this.Mode == ValueFailureErrorMode.Failure) {
             failureDatum = this.Failure;
             valueErrorDatum = default;

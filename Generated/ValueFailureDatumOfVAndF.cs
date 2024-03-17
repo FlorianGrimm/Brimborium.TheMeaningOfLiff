@@ -8,7 +8,7 @@ public enum ValueFailureMode { Value, Failure }
 public readonly partial record struct ValueFailureDatum<V, F>(
     ValueFailureMode Mode,
     ValueDatum<V> Value,
-    FailureDatum<F> Failure
+    FailureDatumOfF<F> Failure
 ){
     private string GetDebuggerDisplay() => this.ToString();
 }

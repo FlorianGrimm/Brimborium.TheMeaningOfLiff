@@ -7,7 +7,7 @@ public readonly partial record struct OptionalFailureDatum<F> {
             _ => throw new InvalidCastException()
         });
     }
-     public static explicit operator FailureDatum<F>(OptionalFailureDatum<F> value) {
+     public static explicit operator FailureDatumOfF<F>(OptionalFailureDatum<F> value) {
         return (value.Mode switch {
             OptionalFailureMode.Failure => value.Failure,
             _ => throw new InvalidCastException()

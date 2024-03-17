@@ -7,7 +7,7 @@ public enum FailureErrorMode { Failure, Error }
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct FailureErrorDatum<F>(
     FailureErrorMode Mode,
-    FailureDatum<F> Failure,
+    FailureDatumOfF<F> Failure,
     ErrorDatum Error
 ){
     private string GetDebuggerDisplay() => this.ToString();

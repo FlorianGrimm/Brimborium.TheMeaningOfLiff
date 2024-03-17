@@ -12,7 +12,7 @@ public static partial class Datum {
         );
     }
     public static ValueFailureErrorDatum<V, F> AsValueFailureErrorDatum<V, F>(
-        this FailureDatum<F> failure
+        this FailureDatumOfF<F> failure
     ) {
         return new ValueFailureErrorDatum<V, F>(
            ValueFailureErrorMode.Failure,

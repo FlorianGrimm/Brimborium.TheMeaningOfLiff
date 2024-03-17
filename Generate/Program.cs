@@ -8,7 +8,7 @@ public class Program {
         var targetPath = System.IO.Path.GetFullPath(
             System.IO.Path.Combine(GetFolder(), @"..\Generated")
             );
-        Console.WriteLine(targetPath);
+        //Console.WriteLine(targetPath);
         /*
          namespace Brimborium.TheMeaningOfLiff;
 
@@ -25,7 +25,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             if (((i >> 2) & 1) == 1) { list.Add("namePartFailure"); }
             if (((i >> 3) & 1) == 1) { list.Add("namePartError"); }
             var csvName = string.Join(", ", list);
-            System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
+            //System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
         }
         NamePart namePartOptional = new("Optional", "optional", "NoValue", "NoDatum", "", "NoDatum");
         NamePart namePartValue = new("Value", "value", "Value", "ValueDatum<V>", "V", "ValueDatumOfV");
@@ -85,10 +85,11 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         }
         foreach (var fullNamePart in listFullNamePart) {
             if (fullNamePart.Parts.Length == 1) {
+                System.Console.WriteLine(fullNamePart.ClassName);
             } else {
                 StringBuilder sb = new();
-                System.Console.WriteLine(fullNamePart.FileName);
-                System.Console.WriteLine(fullNamePart.ClassName);
+                //System.Console.WriteLine(fullNamePart.FileName);
+                //System.Console.WriteLine(fullNamePart.ClassName);
                 sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
                 sb.AppendLine("");
                 sb.Append("public enum ").Append(fullNamePart.ModeName).Append(" { ");
@@ -119,8 +120,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             if (fullNamePart.Parts.Length == 1) {
             } else {
                 StringBuilder sb = new();
-                System.Console.WriteLine(fullNamePart.FileName);
-                System.Console.WriteLine(fullNamePart.ClassName);
+                //System.Console.WriteLine(fullNamePart.FileName);
+                //System.Console.WriteLine(fullNamePart.ClassName);
                 sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
                 sb.AppendLine("");
                 sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "{");
@@ -175,8 +176,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
 
         foreach (var fullNamePart in listFullNamePart) {
             StringBuilder sb = new();
-            System.Console.WriteLine(fullNamePart.FileName);
-            System.Console.WriteLine(fullNamePart.ClassName);
+            //System.Console.WriteLine(fullNamePart.FileName);
+            //System.Console.WriteLine(fullNamePart.ClassName);
             sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
             sb.AppendLine("");
             sb.AppendLine("public static partial class Datum {");
@@ -225,8 +226,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
 
         foreach (var fullNamePart in listFullNamePart) {
             StringBuilder sb = new();
-            System.Console.WriteLine(fullNamePart.FileName);
-            System.Console.WriteLine(fullNamePart.ClassName);
+            //System.Console.WriteLine(fullNamePart.FileName);
+            //System.Console.WriteLine(fullNamePart.ClassName);
             sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
             sb.AppendLine("");
             sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, " {");

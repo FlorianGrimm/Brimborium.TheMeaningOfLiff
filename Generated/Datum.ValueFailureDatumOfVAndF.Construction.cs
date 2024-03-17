@@ -11,7 +11,7 @@ public static partial class Datum {
         );
     }
     public static ValueFailureDatum<V, F> AsValueFailureDatum<V, F>(
-        this FailureDatum<F> failure
+        this FailureDatumOfF<F> failure
     ) {
         return new ValueFailureDatum<V, F>(
            ValueFailureMode.Failure,

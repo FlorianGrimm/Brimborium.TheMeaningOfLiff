@@ -11,7 +11,7 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out FailureDatum<F> failureDatum){
+    public bool TryGetOptional(out NoDatum optionalDatum, out FailureDatumOfF<F> failureDatum){
         if (this.Mode == OptionalFailureMode.NoValue) {
             optionalDatum = this.Optional;
             failureDatum = default;
@@ -23,7 +23,7 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failure){
+    public bool TryGetFailure(out FailureDatumOfF<F> failure){
         if (this.Mode == OptionalFailureMode.Failure) {
             failure = this.Failure;
             return true;
@@ -33,7 +33,7 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failureDatum, out NoDatum optionalDatum){
+    public bool TryGetFailure(out FailureDatumOfF<F> failureDatum, out NoDatum optionalDatum){
         if (this.Mode == OptionalFailureMode.Failure) {
             failureDatum = this.Failure;
             optionalDatum = default;

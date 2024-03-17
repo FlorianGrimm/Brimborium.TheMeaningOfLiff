@@ -2,11 +2,11 @@
 
 [DebuggerNonUserCode]
 public readonly partial record struct ValueDatum<V>(
-    T Value,
+    V Value,
     string? Meaning = default,
     long LogicalTimestamp = 0)
-    : IDatum<T>
-    , ISuccessDatum<T>
+    : IDatum<V>
+    , ISuccessDatum<V>
     , IWithMeaning
     , ILogicalTimestamp {
 

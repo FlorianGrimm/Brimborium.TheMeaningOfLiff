@@ -8,7 +8,7 @@ public enum OptionalFailureMode { NoValue, Failure }
 public readonly partial record struct OptionalFailureDatum<F>(
     OptionalFailureMode Mode,
     NoDatum Optional,
-    FailureDatum<F> Failure
+    FailureDatumOfF<F> Failure
 ){
     private string GetDebuggerDisplay() => this.ToString();
 }

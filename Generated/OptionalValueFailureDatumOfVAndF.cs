@@ -9,7 +9,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>(
     OptionalValueFailureMode Mode,
     NoDatum Optional,
     ValueDatum<V> Value,
-    FailureDatum<F> Failure
+    FailureDatumOfF<F> Failure
 ){
     private string GetDebuggerDisplay() => this.ToString();
 }
