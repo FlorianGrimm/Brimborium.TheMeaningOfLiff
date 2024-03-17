@@ -1,11 +1,11 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
-public readonly partial record struct ValueDatum<T> {
+public readonly partial record struct ValueDatum<V> {
     // iznogood
 
-    public static explicit operator ValueDatum<T>(T that) => new ValueDatum<T>(that, default, 0);
+    public static explicit operator ValueDatum<V>(V that) => new ValueDatum<V>(that, default, 0);
 
-    public static explicit operator T(ValueDatum<T> that) => that.Value;
+    public static explicit operator V(ValueDatum<V> that) => that.Value;
 
 
     public OptionalValueDatum<R> AsOptionalOfType<R>(

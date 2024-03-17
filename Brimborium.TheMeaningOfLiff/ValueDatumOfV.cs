@@ -1,22 +1,22 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
 [DebuggerNonUserCode]
-public readonly partial record struct ValueDatum<T>(
-    T Value,
+public readonly partial record struct ValueDatum<V>(
+    V Value,
     string? Meaning = default,
     long LogicalTimestamp = 0)
-    : IDatum<T>
-    , ISuccessDatum<T>
+    : IDatum<V>
+    , ISuccessDatum<V>
     , IWithMeaning
     , ILogicalTimestamp {
 
-    public readonly ValueDatum<T> WithValue(T value, string? meaning = default, long logicalTimestamp = 0)
-        => new ValueDatum<T>(value, meaning, logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp);
+    public readonly ValueDatum<V> WithValue(V value, string? meaning = default, long logicalTimestamp = 0)
+        => new ValueDatum<V>(value, meaning, logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp);
 
-    public readonly ValueErrorDatum<T> WithError(Exception that, string? meaning = default, long logicalTimestamp = 0)
-        => new ValueErrorDatum<T>(new ErrorDatum(that, default, meaning, logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp));
+    public readonly ValueErrorDatum<V> WithError(Exception that, string? meaning = default, long logicalTimestamp = 0)
+        => new ValueErrorDatum<V>(new ErrorDatum(that, default, meaning, logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp));
 
-    public readonly bool TryGetValue([MaybeNullWhen(false)] out T value) {
+    public readonly bool TryGetValue([MaybeNullWhen(false)] out V value) {
         value = this.Value;
         return true;
     }
