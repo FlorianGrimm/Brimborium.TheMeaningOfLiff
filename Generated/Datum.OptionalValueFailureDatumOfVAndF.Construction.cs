@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 4 Construction
+
 public static partial class Datum {
     public static OptionalValueFailureDatum<V, F> AsOptionalValueFailureDatum<V, F>(
         this NoDatum optional
@@ -22,7 +24,7 @@ public static partial class Datum {
         );
     }
     public static OptionalValueFailureDatum<V, F> AsOptionalValueFailureDatum<V, F>(
-        this FailureDatumOfF<F> failure
+        this FailureDatum<F> failure
     ) {
         return new OptionalValueFailureDatum<V, F>(
            OptionalValueFailureMode.Failure,

@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 2 Downgrade
+
 public readonly partial record struct OptionalValueFailureDatum<V, F>{
     public bool TryGetOptional(out NoDatum optional){
         if (this.Mode == OptionalValueFailureMode.NoValue) {
@@ -61,7 +63,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatumOfF<F> failure){
+    public bool TryGetFailure(out FailureDatum<F> failure){
         if (this.Mode == OptionalValueFailureMode.Failure) {
             failure = this.Failure;
             return true;
@@ -71,7 +73,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatumOfF<F> failureDatum, out OptionalValueDatum<V> optionalValueDatum){
+    public bool TryGetFailure(out FailureDatum<F> failureDatum, out OptionalValueDatum<V> optionalValueDatum){
         if (this.Mode == OptionalValueFailureMode.Failure) {
             failureDatum = this.Failure;
             optionalValueDatum = default;

@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 5 Operator
+
 public readonly partial record struct OptionalValueDatum<V> {
      public static explicit operator NoDatum(OptionalValueDatum<V> value) {
         return (value.Mode switch {

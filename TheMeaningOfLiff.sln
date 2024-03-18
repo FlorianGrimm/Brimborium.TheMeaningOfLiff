@@ -34,6 +34,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "Generate\Genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generated", "Generated\Generated.csproj", "{EFF51955-2778-4EDB-A139-5038CBBBEB29}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototype", "Prototype\Prototype.csproj", "{320F6731-EB89-41C1-8A73-316B42CAC3CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrototypeLiff", "PrototypeLiff\PrototypeLiff.csproj", "{DD14FFF9-FD20-4AFB-9338-5E29F55F9B13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +84,14 @@ Global
 		{EFF51955-2778-4EDB-A139-5038CBBBEB29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFF51955-2778-4EDB-A139-5038CBBBEB29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFF51955-2778-4EDB-A139-5038CBBBEB29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{320F6731-EB89-41C1-8A73-316B42CAC3CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{320F6731-EB89-41C1-8A73-316B42CAC3CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{320F6731-EB89-41C1-8A73-316B42CAC3CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{320F6731-EB89-41C1-8A73-316B42CAC3CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD14FFF9-FD20-4AFB-9338-5E29F55F9B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD14FFF9-FD20-4AFB-9338-5E29F55F9B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD14FFF9-FD20-4AFB-9338-5E29F55F9B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD14FFF9-FD20-4AFB-9338-5E29F55F9B13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,11 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
+[Orleans.Alias(nameof(NoDatum))]
+[Orleans.Immutable]
+[Orleans.GenerateSerializer(IncludePrimaryConstructorParameters = false)]
 [DebuggerNonUserCode]
+[method: JsonConstructor]
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct ValueDatum<V>(
     V Value,
     string? Meaning = default,
@@ -9,6 +14,10 @@ public readonly partial record struct ValueDatum<V>(
     , ISuccessDatum<V>
     , IWithMeaning
     , ILogicalTimestamp {
+
+    private string GetDebuggerDisplay() {
+        return $"{this.Value};{this.Meaning};{this.LogicalTimestamp}";
+    }
 
     //public readonly ValueDatum<T> WithValue(T value, string? meaning = default, long logicalTimestamp = 0)
     //    => new ValueDatum<T>(value, meaning, logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp);

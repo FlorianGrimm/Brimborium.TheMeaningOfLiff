@@ -1,0 +1,27 @@
+namespace Brimborium.TheMeaningOfLiff;
+
+// generated 3 Upgrade
+
+public readonly partial record struct FailureErrorDatum<F>{
+    public OptionalFailureErrorDatum<F> AsOptionalFailureErrorDatum() {
+        return this.Mode switch {
+            FailureErrorMode.Failure => new OptionalFailureErrorDatum<F>(OptionalFailureErrorMode.Failure, default, this.Failure, default),
+            FailureErrorMode.Error => new OptionalFailureErrorDatum<F>(OptionalFailureErrorMode.Error, default, default, this.Error),
+            _ => throw new UninitializedException()
+        };
+    }
+    public ValueFailureErrorDatum<V, F> AsValueFailureErrorDatum<V>() {
+        return this.Mode switch {
+            FailureErrorMode.Failure => new ValueFailureErrorDatum<V, F>(ValueFailureErrorMode.Failure, default, this.Failure, default),
+            FailureErrorMode.Error => new ValueFailureErrorDatum<V, F>(ValueFailureErrorMode.Error, default, default, this.Error),
+            _ => throw new UninitializedException()
+        };
+    }
+    public OptionalValueFailureErrorDatum<V, F> AsOptionalValueFailureErrorDatum<V>() {
+        return this.Mode switch {
+            FailureErrorMode.Failure => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.Failure, default, default, this.Failure, default),
+            FailureErrorMode.Error => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.Error, default, default, default, this.Error),
+            _ => throw new UninitializedException()
+        };
+    }
+}

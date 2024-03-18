@@ -1,7 +1,9 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 2 Downgrade
+
 public readonly partial record struct FailureErrorDatum<F>{
-    public bool TryGetFailure(out FailureDatumOfF<F> failure){
+    public bool TryGetFailure(out FailureDatum<F> failure){
         if (this.Mode == FailureErrorMode.Failure) {
             failure = this.Failure;
             return true;
@@ -11,7 +13,7 @@ public readonly partial record struct FailureErrorDatum<F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatumOfF<F> failureDatum, out ErrorDatum errorDatum){
+    public bool TryGetFailure(out FailureDatum<F> failureDatum, out ErrorDatum errorDatum){
         if (this.Mode == FailureErrorMode.Failure) {
             failureDatum = this.Failure;
             errorDatum = default;
@@ -33,7 +35,7 @@ public readonly partial record struct FailureErrorDatum<F>{
         }
     }
 
-    public bool TryGetError(out ErrorDatum errorDatum, out FailureDatumOfF<F> failureDatum){
+    public bool TryGetError(out ErrorDatum errorDatum, out FailureDatum<F> failureDatum){
         if (this.Mode == FailureErrorMode.Error) {
             errorDatum = this.Error;
             failureDatum = default;

@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 5 Operator
+
 public readonly partial record struct OptionalValueFailureDatum<V, F> {
      public static explicit operator NoDatum(OptionalValueFailureDatum<V, F> value) {
         return (value.Mode switch {
@@ -13,7 +15,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F> {
             _ => throw new InvalidCastException()
         });
     }
-     public static explicit operator FailureDatumOfF<F>(OptionalValueFailureDatum<V, F> value) {
+     public static explicit operator FailureDatum<F>(OptionalValueFailureDatum<V, F> value) {
         return (value.Mode switch {
             OptionalValueFailureMode.Failure => value.Failure,
             _ => throw new InvalidCastException()

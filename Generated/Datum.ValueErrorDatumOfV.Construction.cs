@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 4 Construction
+
 public static partial class Datum {
     public static ValueErrorDatum<V> AsValueErrorDatum<V>(
         this ValueDatum<V> value

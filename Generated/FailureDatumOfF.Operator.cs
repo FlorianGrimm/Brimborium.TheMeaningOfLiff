@@ -1,4 +1,6 @@
 namespace Brimborium.TheMeaningOfLiff;
 
-public readonly partial record struct FailureDatumOfF<F> {
+// generated 5 Operator
+
+public readonly partial record struct FailureDatum<F> {
 }
