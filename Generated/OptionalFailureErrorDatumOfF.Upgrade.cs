@@ -3,6 +3,10 @@ namespace Brimborium.TheMeaningOfLiff;
 // generated 3 Upgrade
 
 public readonly partial record struct OptionalFailureErrorDatum<F>{
+    public static explicit operator OptionalFailureErrorDatum<F>(FailureDatum<F> value) {
+        return value.AsOptionalFailureErrorDatum();
+    }
+
     public OptionalValueFailureErrorDatum<V, F> AsOptionalValueFailureErrorDatum<V>() {
         return this.Mode switch {
             OptionalFailureErrorMode.NoValue => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.NoValue, this.Optional, default, default, default),

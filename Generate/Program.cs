@@ -94,23 +94,23 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             }
         }
 
-        Dictionary<int, FullNamePart> dict = new();
-        dict[1] = new FullNamePart(1, [namePartOptional]);
-        dict[2] = new FullNamePart(2, [namePartValue]);
-        dict[3] = new FullNamePart(3, [namePartOptional, namePartValue]);
-        dict[4] = new FullNamePart(4, [namePartFailure]);
-        dict[5] = new FullNamePart(5, [namePartOptional, namePartFailure]);
-        dict[6] = new FullNamePart(6, [namePartValue, namePartFailure]);
-        dict[7] = new FullNamePart(7, [namePartOptional, namePartValue, namePartFailure]);
-        dict[8] = new FullNamePart(8, [namePartError]);
-        dict[9] = new FullNamePart(9, [namePartOptional, namePartError]);
-        dict[10] = new FullNamePart(10, [namePartValue, namePartError]);
-        dict[11] = new FullNamePart(11, [namePartOptional, namePartValue, namePartError]);
-        dict[12] = new FullNamePart(12, [namePartFailure, namePartError]);
-        dict[13] = new FullNamePart(13, [namePartOptional, namePartFailure, namePartError]);
-        dict[14] = new FullNamePart(14, [namePartValue, namePartFailure, namePartError]);
-        dict[15] = new FullNamePart(15, [namePartOptional, namePartValue, namePartFailure, namePartError]);
-        var listFullNamePart = dict.Keys.OrderBy(i => i).Select(i => dict[i]).ToList();
+        Dictionary<int, FullNamePart> dictFullNamePart = new();
+        dictFullNamePart[1] = new FullNamePart(1, [namePartOptional]);
+        dictFullNamePart[2] = new FullNamePart(2, [namePartValue]);
+        dictFullNamePart[3] = new FullNamePart(3, [namePartOptional, namePartValue]);
+        dictFullNamePart[4] = new FullNamePart(4, [namePartFailure]);
+        dictFullNamePart[5] = new FullNamePart(5, [namePartOptional, namePartFailure]);
+        dictFullNamePart[6] = new FullNamePart(6, [namePartValue, namePartFailure]);
+        dictFullNamePart[7] = new FullNamePart(7, [namePartOptional, namePartValue, namePartFailure]);
+        dictFullNamePart[8] = new FullNamePart(8, [namePartError]);
+        dictFullNamePart[9] = new FullNamePart(9, [namePartOptional, namePartError]);
+        dictFullNamePart[10] = new FullNamePart(10, [namePartValue, namePartError]);
+        dictFullNamePart[11] = new FullNamePart(11, [namePartOptional, namePartValue, namePartError]);
+        dictFullNamePart[12] = new FullNamePart(12, [namePartFailure, namePartError]);
+        dictFullNamePart[13] = new FullNamePart(13, [namePartOptional, namePartFailure, namePartError]);
+        dictFullNamePart[14] = new FullNamePart(14, [namePartValue, namePartFailure, namePartError]);
+        dictFullNamePart[15] = new FullNamePart(15, [namePartOptional, namePartValue, namePartFailure, namePartError]);
+        var listFullNamePart = dictFullNamePart.Keys.OrderBy(i => i).Select(i => dictFullNamePart[i]).ToList();
         foreach (var fullNamePart in listFullNamePart) {
             //foreach (var part in fullNamePart.Parts) {
             //    if (!string.IsNullOrEmpty(part.GenericTypeArgName)) {
@@ -125,7 +125,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 var arrClassNamePart = part0.ClassName.Split('<', '>');
                 fullNamePart.ClassNameNoGenericArgument = arrClassNamePart.First();
                 fullNamePart.ListGenericArgument.AddRange(
-                    (arrClassNamePart.Skip(1).FirstOrDefault() ?? "").Split(",").Select(s => s.Trim()).Where(s=>s.Length>0)
+                    (arrClassNamePart.Skip(1).FirstOrDefault() ?? "").Split(",").Select(s => s.Trim()).Where(s => s.Length > 0)
                     );
                 fullNamePart.FileName = part0.FileName;
                 fullNamePart.ArgName = part0.ArgName;
@@ -135,7 +135,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 foreach (var s in fullNamePart.Parts.Where(i => i.GenericTypeArgName != "").Select(i => i.GenericTypeArgName).Where(s => s.Length > 0)) {
                     if (fullNamePart.ListGenericArgument.Contains(s)) {
                         //
-                    } else { 
+                    } else {
                         fullNamePart.ListGenericArgument.Add(s);
                     }
 
@@ -160,20 +160,20 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             }
 
             foreach (var bit in new int[] { 1, 2, 4, 8 }) {
-                if (dict.TryGetValue(bit, out var fullNamePartBit)) {
+                if (dictFullNamePart.TryGetValue(bit, out var fullNamePartBit)) {
                     if ((fullNamePart.iType & bit) == bit) {
                         int iTypeDowngrade = (fullNamePart.iType & ~bit);
                         if (iTypeDowngrade != 0) {
-                            fullNamePart.ListDowngrade.Add(new Downgrade(fullNamePartBit, dict[iTypeDowngrade]));
+                            fullNamePart.ListDowngrade.Add(new Downgrade(fullNamePartBit, dictFullNamePart[iTypeDowngrade]));
                         }
                     }
                 }
             }
             foreach (var bit in new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }) {
-                if (dict.TryGetValue(bit, out var fullNamePartBit)) {
+                if (dictFullNamePart.TryGetValue(bit, out var fullNamePartBit)) {
                     if ((fullNamePart.iType & ~bit) == fullNamePart.iType) {
                         var iTypeUpgrade = (fullNamePart.iType | bit);
-                        if (dict.TryGetValue(iTypeUpgrade, out var fullNamePartUpgrade)) {
+                        if (dictFullNamePart.TryGetValue(iTypeUpgrade, out var fullNamePartUpgrade)) {
                             fullNamePart.ListUpgrade.Add(new Upgrade(fullNamePartBit, fullNamePartUpgrade));
                         }
                     }
@@ -197,7 +197,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 sb.AppendLine("");
                 sb.Append("public enum ").Append(fullNamePart.ModeTypeName).Append(" { ");
                 foreach (var namePart in fullNamePart.Parts.ToListIndex()) {
-                    sb.Append(namePart.Item.EnumValueName);
+                    sb.Append(namePart.Item.ModeEnumValueName);
                     if (!namePart.isLast) { sb.Append(", "); }
                 }
                 sb.Append(" }").AppendLine();
@@ -218,7 +218,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
 
                 sb.AppendLine($"    public string? Meaning => this.Mode switch {{");
                 foreach (var part in fullNamePart.Parts) {
-                    sb.AppendLine($"        {fullNamePart.ModeTypeName}.{part.EnumValueName} => this.{part.PartName}.Meaning,");
+                    sb.AppendLine($"        {fullNamePart.ModeTypeName}.{part.ModeEnumValueName} => this.{part.PartName}.Meaning,");
                 }
                 sb.AppendLine($"        _ => default");
                 sb.AppendLine($"    }};");
@@ -226,7 +226,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
 
                 sb.AppendLine($"    public long LogicalTimestamp => this.Mode switch {{");
                 foreach (var part in fullNamePart.Parts) {
-                    sb.AppendLine($"        {fullNamePart.ModeTypeName}.{part.EnumValueName} => this.{part.PartName}.LogicalTimestamp,");
+                    sb.AppendLine($"        {fullNamePart.ModeTypeName}.{part.ModeEnumValueName} => this.{part.PartName}.LogicalTimestamp,");
                 }
                 sb.AppendLine($"        _ => default");
                 sb.AppendLine($"    }};");
@@ -253,7 +253,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 foreach (var (extractType, downgradeType) in fullNamePart.ListDowngrade) {
 
                     sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "(out ", extractType.ClassName, " ", extractType.ArgName, "){");
-                    sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeTypeName, ".", extractType.Parts[0].EnumValueName, ") {");
+                    sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeTypeName, ".", extractType.Parts[0].ModeEnumValueName, ") {");
                     sb.AppendLine("            ", extractType.ArgName, " = this.", extractType.Parts[0].PartName, ";");
                     sb.AppendLine("            return true;");
                     sb.AppendLine("        } else {");
@@ -264,7 +264,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("");
 
                     sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "(out ", extractType.ClassName, " ", extractType.ArgName, "Datum, out ", downgradeType.ClassName, " ", downgradeType.ArgName, "Datum){");
-                    sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeTypeName, ".", extractType.Parts[0].EnumValueName, ") {");
+                    sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeTypeName, ".", extractType.Parts[0].ModeEnumValueName, ") {");
                     sb.AppendLine("            ", extractType.ArgName, "Datum = this.", extractType.Parts[0].PartName, ";");
                     sb.AppendLine("            ", downgradeType.ArgName, "Datum = default;");
                     sb.AppendLine("            return true;");
@@ -276,7 +276,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         sb.AppendLine("            ", downgradeType.ArgName, "Datum = new ", downgradeType.ClassName, "(");
                         sb.AppendLine("                ((this.Mode) switch {");
                         foreach (var downgradeTypeIndex in downgradeType.Parts.ToListIndex()) {
-                            sb.AppendLine("                    ", fullNamePart.ModeTypeName, ".", downgradeTypeIndex.Item.EnumValueName, " => ", downgradeType.ModeTypeName, ".", downgradeTypeIndex.Item.EnumValueName, ",");
+                            sb.AppendLine("                    ", fullNamePart.ModeTypeName, ".", downgradeTypeIndex.Item.ModeEnumValueName, " => ", downgradeType.ModeTypeName, ".", downgradeTypeIndex.Item.ModeEnumValueName, ",");
                         }
                         sb.AppendLine("                    _ => throw new InvalidOperationException()");
                         sb.AppendLine("                }),");
@@ -297,17 +297,15 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         // generated 3 Upgrade
 
         foreach (var fullNamePart in listFullNamePart) {
-            if (fullNamePart.Parts.Length == 1) {
-            } else {
                 StringBuilder sb = getFile($"{fullNamePart.FileName}.Upgrade.cs");
 
-                //System.Console.WriteLine(fullNamePart.FileName);
-                //System.Console.WriteLine(fullNamePart.ClassName);
                 sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
                 sb.AppendLine("");
-                sb.AppendLine("// generated 3 Upgrade");
+                sb.AppendLine("// generated 3");
                 sb.AppendLine("");
                 sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "{");
+            if (fullNamePart.Parts.Length == 1) {
+            } else {
                 foreach (var (extractType, upgradeType) in fullNamePart.ListUpgrade) {
                     // sb.AppendLine($"//    extractType:{extractType.ClassName} upgradeType:{upgradeType.ClassName}");
 
@@ -320,14 +318,16 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         }
                     }
                     var missingGenericArgument = GenericArgumentToString(listMissingGenericArgument);
-
+                    sb.AppendLine("");
+                    sb.AppendLine("// generated 3 Upgrade");
+                    sb.AppendLine("");
                     sb.AppendLine($"    public {upgradeType.ClassName} As{upgradeType.MethodName}{missingGenericArgument}() {{");
 
                     sb.AppendLine($"        return this.Mode switch {{");
                     foreach (var fullNamePartPart in fullNamePart.Parts) {
-                        sb.Append($"            {fullNamePart.ModeTypeName}.{fullNamePartPart.EnumValueName} => new {upgradeType.ClassName}({upgradeType.ModeTypeName}.{fullNamePartPart.EnumValueName}, ");
+                        sb.Append($"            {fullNamePart.ModeTypeName}.{fullNamePartPart.ModeEnumValueName} => new {upgradeType.ClassName}({upgradeType.ModeTypeName}.{fullNamePartPart.ModeEnumValueName}, ");
                         foreach (var upgradeTypePart in upgradeType.Parts.ToListIndex()) {
-                            if (upgradeTypePart.Item.EnumValueName == fullNamePartPart.EnumValueName) {
+                            if (upgradeTypePart.Item.ModeEnumValueName == fullNamePartPart.ModeEnumValueName) {
                                 sb.Append($"this.{fullNamePartPart.PartName}");
                             } else {
                                 sb.Append("default");
@@ -381,8 +381,15 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("");
                     */
                 }
-                sb.AppendLine("}");
+
+                /*
+
+                    public static explicit operator OptionalFailureErrorDatum<F>(FailureDatum<F> value) {
+                        return value.AsOptionalFailureErrorDatum();
+                    } 
+                */
             }
+            sb.AppendLine("}");
         }
 
         // generated 4 Construction
@@ -423,7 +430,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("        this ", partIndex.Item.ClassName, " ", partIndex.Item.ArgName);
                     sb.AppendLine("    ) {");
                     sb.AppendLine("        return new ", fullNamePart.ClassName, "(");
-                    sb.AppendLine("           ", fullNamePart.ModeTypeName, ".", partIndex.Item.EnumValueName, ",");
+                    sb.AppendLine("           ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, ",");
                     foreach (var partIndexParameter in fullNamePart.Parts.ToListIndex()) {
                         if (partIndex.index == partIndexParameter.index) {
                             sb.AppendLine("           ", partIndexParameter.Item.ArgName, partIndexParameter.isLast ? "" : ",");
@@ -489,7 +496,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("");
                     sb.AppendLine("     public static explicit operator ", partIndex.Item.ClassName, "(", fullNamePart.ClassName, " value) {");
                     sb.AppendLine("        return (value.Mode switch {");
-                    sb.AppendLine("            ", fullNamePart.ModeTypeName, ".", partIndex.Item.EnumValueName, " => value.", partIndex.Item.PartName, ",");
+                    sb.AppendLine("            ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => value.", partIndex.Item.PartName, ",");
                     sb.AppendLine("            _ => throw new InvalidCastException()");
                     sb.AppendLine("        });");
                     sb.AppendLine("    }");
@@ -502,32 +509,53 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             var listOutGenericArgument = fullNamePart.ListGenericArgument.Select(a => $"O{a}").ToList();
             var csvOutGenericArgument = GenericArgumentToString(listOutGenericArgument);
             var fullNameOut = fullNamePart.GetClassNameWithGenericArgument(listOutGenericArgument);
-            sb.AppendLine("/*");
-            sb.AppendLine("    public static ", fullNameOut, " Switch<", csvOutGenericArgument, ">(");
-            sb.AppendLine("    public static ValueFailureErrorDatum<V, F> Switch<V, F>(");
-            sb.AppendLine("        this ValueFailureErrorDatum<V, F> value,");
-            sb.AppendLine("        ValueFailureErrorDatum<V, F> defaultValue,");
-            sb.AppendLine("        Func<ValueDatum<V>, ValueFailureErrorDatum<V, F>>? valueFunc,");
-            sb.AppendLine("        Func<FailureDatum<F>, ValueFailureErrorDatum<V, F>>? failureFunc,");
-            sb.AppendLine("        Func<ErrorDatum, ValueFailureErrorDatum<V, F>>? errorFunc");
+            var hasError = fullNamePart.Parts.Any(p => p.iType == iTypeError);
+            sb.AppendLine("    public ", fullNameOut, " Switch", csvOutGenericArgument, "(");
+            sb.AppendLine("        ", fullNameOut, " defaultValue,");
+            foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                var funcName = $"func{partIndex.Item.PartName}";
+                if (partIndex.Item.iType == iTypeOptional) {
+                    sb.AppendLine("        Func<", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                } else {
+                    sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                }
+            }
             sb.AppendLine("        ) {");
-            sb.AppendLine("        try {");
-            sb.AppendLine("            return value.Mode switch {");
-            sb.AppendLine("                ValueFailureErrorMode.Value => (valueFunc is not null) ? valueFunc(value.Value) : defaultValue,");
-            sb.AppendLine("                ValueFailureErrorMode.Failure => (failureFunc is not null) ? failureFunc(value.Failure) : value,");
-            sb.AppendLine("                ValueFailureErrorMode.Error => (errorFunc is not null) ? errorFunc(value.Error):value,");
-            sb.AppendLine("                _ => defaultValue");
+            if (hasError) {
+                sb.AppendLine("        try {");
+            } else {
+                sb.AppendLine("        {");
+            }
+            sb.AppendLine("            return (this.Mode) switch {");
+            foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                var funcName = $"func{partIndex.Item.PartName}";
+                sb.Append("                ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => ");
+                if (partIndex.Item.iType == iTypeOptional) {
+                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "() : defaultValue,");
+                } else if (partIndex.Item.iType == iTypeValue) {
+                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Value) : defaultValue,");
+                } else if (partIndex.Item.iType == iTypeFailure) {
+                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Failure) : defaultValue,");
+                } else if (partIndex.Item.iType == iTypeError) {
+                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Error) : this.Error,");
+                }
+            }
+            sb.AppendLine("            _ => defaultValue");
             sb.AppendLine("            };");
-            sb.AppendLine("        } catch (Exception error) {");
-            sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).AsValueFailureErrorDatum<V, F>();");
-            sb.AppendLine("        }");
+            if (hasError) {
+                sb.AppendLine("        } catch (Exception error) {");
+                sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNameOut, "();");
+                sb.AppendLine("        }");
+            } else {
+                sb.AppendLine("        }");
+            }
             sb.AppendLine("    }");
-            sb.AppendLine("*/");
             sb.AppendLine("");
 
             sb.AppendLine("}");
         }
 
+        // write
 
         foreach (var kvFile in dictFile) {
             System.IO.File.WriteAllText(
@@ -555,7 +583,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         return System.IO.Path.GetDirectoryName(filePath) ?? string.Empty;
     }
 }
-public record NamePart(int iType, Type Type, string PartName, string ArgName, string EnumValueName, string ClassName, string GenericTypeArgName, string FileName) {
+public record NamePart(int iType, Type Type, string PartName, string ArgName, string ModeEnumValueName, string ClassName, string GenericTypeArgName, string FileName) {
     public List<Parameter> Parameters { get; } = new();
     public override string ToString() {
         return this.PartName;

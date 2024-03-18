@@ -33,26 +33,22 @@ public readonly partial record struct ValueFailureErrorDatum<V, F> {
 
     // generated 5 switch
 
-/*
-    public static ValueFailureErrorDatum<OV, OF> Switch<<OV, OF>>(
-    public static ValueFailureErrorDatum<V, F> Switch<V, F>(
-        this ValueFailureErrorDatum<V, F> value,
-        ValueFailureErrorDatum<V, F> defaultValue,
-        Func<ValueDatum<V>, ValueFailureErrorDatum<V, F>>? valueFunc,
-        Func<FailureDatum<F>, ValueFailureErrorDatum<V, F>>? failureFunc,
-        Func<ErrorDatum, ValueFailureErrorDatum<V, F>>? errorFunc
+    public ValueFailureErrorDatum<OV, OF> Switch<OV, OF>(
+        ValueFailureErrorDatum<OV, OF> defaultValue,
+        Func<ValueDatum<V>, ValueFailureErrorDatum<OV, OF>>? funcValue = default,
+        Func<FailureDatum<F>, ValueFailureErrorDatum<OV, OF>>? funcFailure = default,
+        Func<ErrorDatum, ValueFailureErrorDatum<OV, OF>>? funcError = default
         ) {
         try {
-            return value.Mode switch {
-                ValueFailureErrorMode.Value => (valueFunc is not null) ? valueFunc(value.Value) : defaultValue,
-                ValueFailureErrorMode.Failure => (failureFunc is not null) ? failureFunc(value.Failure) : value,
-                ValueFailureErrorMode.Error => (errorFunc is not null) ? errorFunc(value.Error):value,
-                _ => defaultValue
+            return (this.Mode) switch {
+                ValueFailureErrorMode.Value => (funcValue is not null) ? funcValue(this.Value) : defaultValue,
+                ValueFailureErrorMode.Failure => (funcFailure is not null) ? funcFailure(this.Failure) : defaultValue,
+                ValueFailureErrorMode.Error => (funcError is not null) ? funcError(this.Error) : this.Error,
+            _ => defaultValue
             };
         } catch (Exception error) {
-            return ErrorDatum.CreateFromCatchedException(error).AsValueFailureErrorDatum<V, F>();
+            return ErrorDatum.CreateFromCatchedException(error).AsValueFailureErrorDatum<OV, OF>();
         }
     }
-*/
 
 }

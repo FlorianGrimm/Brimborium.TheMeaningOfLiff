@@ -42,26 +42,24 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F> {
 
     // generated 5 switch
 
-/*
-    public static OptionalValueFailureErrorDatum<OV, OF> Switch<<OV, OF>>(
-    public static ValueFailureErrorDatum<V, F> Switch<V, F>(
-        this ValueFailureErrorDatum<V, F> value,
-        ValueFailureErrorDatum<V, F> defaultValue,
-        Func<ValueDatum<V>, ValueFailureErrorDatum<V, F>>? valueFunc,
-        Func<FailureDatum<F>, ValueFailureErrorDatum<V, F>>? failureFunc,
-        Func<ErrorDatum, ValueFailureErrorDatum<V, F>>? errorFunc
+    public OptionalValueFailureErrorDatum<OV, OF> Switch<OV, OF>(
+        OptionalValueFailureErrorDatum<OV, OF> defaultValue,
+        Func<OptionalValueFailureErrorDatum<OV, OF>>? funcOptional = default,
+        Func<ValueDatum<V>, OptionalValueFailureErrorDatum<OV, OF>>? funcValue = default,
+        Func<FailureDatum<F>, OptionalValueFailureErrorDatum<OV, OF>>? funcFailure = default,
+        Func<ErrorDatum, OptionalValueFailureErrorDatum<OV, OF>>? funcError = default
         ) {
         try {
-            return value.Mode switch {
-                ValueFailureErrorMode.Value => (valueFunc is not null) ? valueFunc(value.Value) : defaultValue,
-                ValueFailureErrorMode.Failure => (failureFunc is not null) ? failureFunc(value.Failure) : value,
-                ValueFailureErrorMode.Error => (errorFunc is not null) ? errorFunc(value.Error):value,
-                _ => defaultValue
+            return (this.Mode) switch {
+                OptionalValueFailureErrorMode.NoValue => (funcOptional is not null) ? funcOptional() : defaultValue,
+                OptionalValueFailureErrorMode.Value => (funcValue is not null) ? funcValue(this.Value) : defaultValue,
+                OptionalValueFailureErrorMode.Failure => (funcFailure is not null) ? funcFailure(this.Failure) : defaultValue,
+                OptionalValueFailureErrorMode.Error => (funcError is not null) ? funcError(this.Error) : this.Error,
+            _ => defaultValue
             };
         } catch (Exception error) {
-            return ErrorDatum.CreateFromCatchedException(error).AsValueFailureErrorDatum<V, F>();
+            return ErrorDatum.CreateFromCatchedException(error).AsOptionalValueFailureErrorDatum<OV, OF>();
         }
     }
-*/
 
 }

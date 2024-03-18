@@ -33,26 +33,20 @@ public readonly partial record struct OptionalValueFailureDatum<V, F> {
 
     // generated 5 switch
 
-/*
-    public static OptionalValueFailureDatum<OV, OF> Switch<<OV, OF>>(
-    public static ValueFailureErrorDatum<V, F> Switch<V, F>(
-        this ValueFailureErrorDatum<V, F> value,
-        ValueFailureErrorDatum<V, F> defaultValue,
-        Func<ValueDatum<V>, ValueFailureErrorDatum<V, F>>? valueFunc,
-        Func<FailureDatum<F>, ValueFailureErrorDatum<V, F>>? failureFunc,
-        Func<ErrorDatum, ValueFailureErrorDatum<V, F>>? errorFunc
+    public OptionalValueFailureDatum<OV, OF> Switch<OV, OF>(
+        OptionalValueFailureDatum<OV, OF> defaultValue,
+        Func<OptionalValueFailureDatum<OV, OF>>? funcOptional = default,
+        Func<ValueDatum<V>, OptionalValueFailureDatum<OV, OF>>? funcValue = default,
+        Func<FailureDatum<F>, OptionalValueFailureDatum<OV, OF>>? funcFailure = default
         ) {
-        try {
-            return value.Mode switch {
-                ValueFailureErrorMode.Value => (valueFunc is not null) ? valueFunc(value.Value) : defaultValue,
-                ValueFailureErrorMode.Failure => (failureFunc is not null) ? failureFunc(value.Failure) : value,
-                ValueFailureErrorMode.Error => (errorFunc is not null) ? errorFunc(value.Error):value,
-                _ => defaultValue
+        {
+            return (this.Mode) switch {
+                OptionalValueFailureMode.NoValue => (funcOptional is not null) ? funcOptional() : defaultValue,
+                OptionalValueFailureMode.Value => (funcValue is not null) ? funcValue(this.Value) : defaultValue,
+                OptionalValueFailureMode.Failure => (funcFailure is not null) ? funcFailure(this.Failure) : defaultValue,
+            _ => defaultValue
             };
-        } catch (Exception error) {
-            return ErrorDatum.CreateFromCatchedException(error).AsValueFailureErrorDatum<V, F>();
         }
     }
-*/
 
 }

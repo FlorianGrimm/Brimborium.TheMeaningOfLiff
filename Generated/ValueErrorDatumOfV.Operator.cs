@@ -24,26 +24,20 @@ public readonly partial record struct ValueErrorDatum<V> {
 
     // generated 5 switch
 
-/*
-    public static ValueErrorDatum<OV> Switch<<OV>>(
-    public static ValueFailureErrorDatum<V, F> Switch<V, F>(
-        this ValueFailureErrorDatum<V, F> value,
-        ValueFailureErrorDatum<V, F> defaultValue,
-        Func<ValueDatum<V>, ValueFailureErrorDatum<V, F>>? valueFunc,
-        Func<FailureDatum<F>, ValueFailureErrorDatum<V, F>>? failureFunc,
-        Func<ErrorDatum, ValueFailureErrorDatum<V, F>>? errorFunc
+    public ValueErrorDatum<OV> Switch<OV>(
+        ValueErrorDatum<OV> defaultValue,
+        Func<ValueDatum<V>, ValueErrorDatum<OV>>? funcValue = default,
+        Func<ErrorDatum, ValueErrorDatum<OV>>? funcError = default
         ) {
         try {
-            return value.Mode switch {
-                ValueFailureErrorMode.Value => (valueFunc is not null) ? valueFunc(value.Value) : defaultValue,
-                ValueFailureErrorMode.Failure => (failureFunc is not null) ? failureFunc(value.Failure) : value,
-                ValueFailureErrorMode.Error => (errorFunc is not null) ? errorFunc(value.Error):value,
-                _ => defaultValue
+            return (this.Mode) switch {
+                ValueErrorMode.Value => (funcValue is not null) ? funcValue(this.Value) : defaultValue,
+                ValueErrorMode.Error => (funcError is not null) ? funcError(this.Error) : this.Error,
+            _ => defaultValue
             };
         } catch (Exception error) {
-            return ErrorDatum.CreateFromCatchedException(error).AsValueFailureErrorDatum<V, F>();
+            return ErrorDatum.CreateFromCatchedException(error).AsValueErrorDatum<OV>();
         }
     }
-*/
 
 }
