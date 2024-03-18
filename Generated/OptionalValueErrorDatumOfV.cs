@@ -1,6 +1,6 @@
 namespace Brimborium.TheMeaningOfLiff;
 
-// generated type
+// generated 1 type
 
 public enum OptionalValueErrorMode { NoValue, Value, Error }
 

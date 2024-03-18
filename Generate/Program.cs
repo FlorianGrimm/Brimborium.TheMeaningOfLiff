@@ -1,10 +1,19 @@
-﻿using System.Reflection.Metadata;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Generate;
 
 public class Program {
+
+    private const int iTypeOptional = 0x01;
+    private const int iTypeValue = 0x02;
+    private const int iTypeFailure = 0x04;
+    private const int iTypeError = 0x08;
+    private const int iTypeValueError = 0x02 | 0x08;
+
     public static void Main(string[] args) {
         var targetPath = System.IO.Path.GetFullPath(
             System.IO.Path.Combine(GetFolder(), @"..\Generated")
@@ -28,10 +37,11 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             var csvName = string.Join(", ", list);
             //System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
         }
-        NamePart namePartOptional = new(typeof(Brimborium.TheMeaningOfLiff.NoDatum), "Optional", "optional", "NoValue", "NoDatum", "", "NoDatum");
-        NamePart namePartValue = new(typeof(Brimborium.TheMeaningOfLiff.ValueDatum<>), "Value", "value", "Value", "ValueDatum<V>", "V", "ValueDatumOfV");
-        NamePart namePartFailure = new(typeof(Brimborium.TheMeaningOfLiff.FailureDatum<>), "Failure", "failure", "Failure", "FailureDatum<F>", "F", "FailureDatumOfF");
-        NamePart namePartError = new(typeof(Brimborium.TheMeaningOfLiff.ErrorDatum), "Error", "error", "Error", "ErrorDatum", "", "ErrorDatum");
+        NamePart namePartOptional = new(iTypeOptional, typeof(Brimborium.TheMeaningOfLiff.NoDatum), "Optional", "optional", "NoValue", "NoDatum", "", "NoDatum");
+        NamePart namePartValue = new(iTypeValue, typeof(Brimborium.TheMeaningOfLiff.ValueDatum<>), "Value", "value", "Value", "ValueDatum<V>", "V", "ValueDatumOfV");
+        NamePart namePartFailure = new(iTypeFailure, typeof(Brimborium.TheMeaningOfLiff.FailureDatum<>), "Failure", "failure", "Failure", "FailureDatum<F>", "F", "FailureDatumOfF");
+        NamePart namePartError = new(iTypeError, typeof(Brimborium.TheMeaningOfLiff.ErrorDatum), "Error", "error", "Error", "ErrorDatum", "", "ErrorDatum");
+
         List<NamePart> listAllParts = [
             namePartOptional,
             namePartValue,
@@ -41,19 +51,28 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
 
 
         //string? Meaning = default,    long LogicalTimestamp = 0)
+
+        NullabilityInfoContext nullabilityInfoContext = new();
+
         foreach (var part in listAllParts) {
             var constructor = part.Type.GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
             part.Parameters.AddRange(
                 constructor.GetParameters().Select(p => {
+                    var nullabilityInfo = nullabilityInfoContext.Create(p);
+                    var parameterTypeName = p.ParameterType.FullName ?? p.ParameterType.Name;
+                    //p.GetCustomAttributes().Any(a=>a.GetType().FullName == "")
+                    var nullable = nullabilityInfo.ReadState == NullabilityState.Nullable;
                     if (p.HasDefaultValue) {
                         return new Parameter(
-                            p.ParameterType.FullName ?? p.ParameterType.Name,
+                            parameterTypeName,
+                            nullable,
                             p.Name!,
                             p.HasDefaultValue,
                             p.DefaultValue);
                     } else {
                         return new Parameter(
-                            p.ParameterType.FullName ?? p.ParameterType.Name,
+                            parameterTypeName,
+                            nullable,
                             p.Name!,
                             p.HasDefaultValue,
                             null);
@@ -61,14 +80,14 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 }));
             foreach (var itemIndex in part.Parameters.ToListIndex()) {
                 var parameter = itemIndex.Item;
-                if (itemIndex.index == 0) {
-                    parameter.ParameterMode = ParameterMode.Value;
-                } else if (string.Equals("Meaning", parameter.Name, StringComparison.OrdinalIgnoreCase)) {
+                if (string.Equals("Meaning", parameter.Name, StringComparison.OrdinalIgnoreCase)) {
                     parameter.ParameterMode = ParameterMode.Meaning;
                 } else if (string.Equals("LogicalTimestamp", parameter.Name, StringComparison.OrdinalIgnoreCase)) {
                     parameter.ParameterMode = ParameterMode.LogicalTimestamp;
                 } else if (string.Equals("IsLogged", parameter.Name, StringComparison.OrdinalIgnoreCase)) {
                     parameter.ParameterMode = ParameterMode.IsLogged;
+                } else if (itemIndex.index == 0) {
+                    parameter.ParameterMode = ParameterMode.Value;
                 } else {
                     parameter.ParameterMode = ParameterMode.AdditionalValue;
                 }
@@ -93,34 +112,51 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         dict[15] = new FullNamePart(15, [namePartOptional, namePartValue, namePartFailure, namePartError]);
         var listFullNamePart = dict.Keys.OrderBy(i => i).Select(i => dict[i]).ToList();
         foreach (var fullNamePart in listFullNamePart) {
-            foreach (var part in fullNamePart.Parts) {
-                if (!string.IsNullOrEmpty(part.GenericTypeArgName)) {
-                    if (!fullNamePart.ListGenericArgument.Contains(part.GenericTypeArgName)) {
-                        fullNamePart.ListGenericArgument.Add(part.GenericTypeArgName);
-                    }
-                }
-            }
+            //foreach (var part in fullNamePart.Parts) {
+            //    if (!string.IsNullOrEmpty(part.GenericTypeArgName)) {
+            //        if (!fullNamePart.ListGenericArgument.Contains(part.GenericTypeArgName)) {
+            //            fullNamePart.ListGenericArgument.Add(part.GenericTypeArgName);
+            //        }
+            //    }
+            //}
             if (fullNamePart.Parts.Length == 1) {
-                fullNamePart.ClassName = fullNamePart.Parts[0].ClassName;
-                fullNamePart.FileName = fullNamePart.Parts[0].FileName;
-                fullNamePart.ArgName = fullNamePart.Parts[0].ArgName;
+                var part0 = fullNamePart.Parts[0];
+                fullNamePart.ClassName = part0.ClassName;
+                var arrClassNamePart = part0.ClassName.Split('<', '>');
+                fullNamePart.ClassNameNoGenericArgument = arrClassNamePart.First();
+                fullNamePart.ListGenericArgument.AddRange(
+                    (arrClassNamePart.Skip(1).FirstOrDefault() ?? "").Split(",").Select(s => s.Trim()).Where(s=>s.Length>0)
+                    );
+                fullNamePart.FileName = part0.FileName;
+                fullNamePart.ArgName = part0.ArgName;
+                fullNamePart.Parameters.AddRange(part0.Parameters);
             } else {
-                fullNamePart.Parameters.Add(new Parameter(fullNamePart.ModeTypeName, "Mode", false, null) { ParameterMode = ParameterMode.Mode });
-                foreach (var namePart in fullNamePart.Parts) {
-                    fullNamePart.Parameters.Add(new Parameter(namePart.ClassName, namePart.PartName, false, null) { ParameterMode = ParameterMode.CaseValue });
-                }
                 var csvParts = string.Join("", fullNamePart.Parts.Select(i => i.PartName));
-                var csvGenericTypeArgNames = string.Join(", ", fullNamePart.Parts.Where(i => i.GenericTypeArgName != "").Select(i => i.GenericTypeArgName));
-                var filenameSuffix = string.Join("And", fullNamePart.Parts.Where(i => i.GenericTypeArgName != "").Select(i => i.GenericTypeArgName));
+                foreach (var s in fullNamePart.Parts.Where(i => i.GenericTypeArgName != "").Select(i => i.GenericTypeArgName).Where(s => s.Length > 0)) {
+                    if (fullNamePart.ListGenericArgument.Contains(s)) {
+                        //
+                    } else { 
+                        fullNamePart.ListGenericArgument.Add(s);
+                    }
+
+                }
+                var csvGenericTypeArgNames = string.Join(", ", fullNamePart.ListGenericArgument);
+                var filenameSuffix = string.Join("And", fullNamePart.ListGenericArgument);
                 fullNamePart.ModeTypeName = $"{csvParts}Mode";
                 if (string.IsNullOrEmpty(csvGenericTypeArgNames)) {
                     fullNamePart.FileName = $"{csvParts}Datum";
                     fullNamePart.ClassName = $"{csvParts}Datum";
+                    fullNamePart.ClassNameNoGenericArgument = $"{csvParts}Datum";
                 } else {
                     fullNamePart.FileName = $"{csvParts}DatumOf{filenameSuffix}";
                     fullNamePart.ClassName = $"{csvParts}Datum<{csvGenericTypeArgNames}>";
+                    fullNamePart.ClassNameNoGenericArgument = $"{csvParts}Datum";
                 }
                 fullNamePart.ArgName = csvParts[0..1].ToLower() + csvParts[1..^0];
+                fullNamePart.Parameters.Add(new Parameter(fullNamePart.ModeTypeName, false, "Mode", false, null) { ParameterMode = ParameterMode.Mode });
+                foreach (var namePart in fullNamePart.Parts) {
+                    fullNamePart.Parameters.Add(new Parameter(namePart.ClassName, false, namePart.PartName, false, null) { ParameterMode = ParameterMode.CaseValue });
+                }
             }
 
             foreach (var bit in new int[] { 1, 2, 4, 8 }) {
@@ -146,6 +182,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         }
         Dictionary<string, StringBuilder> dictFile = new();
 
+        // generated 1 type
+
         foreach (var fullNamePart in listFullNamePart) {
             if (fullNamePart.Parts.Length == 1) {
                 // System.Console.WriteLine(fullNamePart.ClassName);
@@ -155,7 +193,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 //System.Console.WriteLine(fullNamePart.ClassName);
                 sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
                 sb.AppendLine("");
-                sb.AppendLine("// generated type");
+                sb.AppendLine("// generated 1 type");
                 sb.AppendLine("");
                 sb.Append("public enum ").Append(fullNamePart.ModeTypeName).Append(" { ");
                 foreach (var namePart in fullNamePart.Parts.ToListIndex()) {
@@ -166,11 +204,14 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 sb.AppendLine("");
                 sb.AppendLine("[DebuggerNonUserCode]");
                 sb.AppendLine("""[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]""");
-                sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "(");               
-                sb.AppendLine("    ", fullNamePart.ModeTypeName, " Mode,");
-                foreach (var namePart in fullNamePart.Parts.ToListIndex()) {
-                    sb.AppendLine("    ", namePart.Item.ClassName, " ", namePart.Item.PartName, namePart.isLast ? "" : ",");
+                sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "(");
+                foreach (var parameter in fullNamePart.Parameters.ToListIndex()) {
+                    sb.Append("    ").Append(parameter.Item.ToString()).Append(parameter.isLast ? "" : ",").AppendLine();
                 }
+                //sb.AppendLine("    ", fullNamePart.ModeTypeName, " Mode,");
+                //foreach (var namePart in fullNamePart.Parts.ToListIndex()) {
+                //    sb.AppendLine("    ", namePart.Item.ClassName, " ", namePart.Item.PartName, namePart.isLast ? "" : ",");
+                //}
                 sb.AppendLine(") : IWithMeaning, ILogicalTimestamp {");
                 sb.AppendLine("    private string GetDebuggerDisplay() => this.ToString();");
                 sb.AppendLine();
@@ -194,6 +235,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 sb.AppendLine("}");
             }
         }
+
+        // generated 2 Downgrade
 
         foreach (var fullNamePart in listFullNamePart) {
             if (fullNamePart.Parts.Length == 1) {
@@ -250,6 +293,9 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 sb.AppendLine("}");
             }
         }
+
+        // generated 3 Upgrade
+
         foreach (var fullNamePart in listFullNamePart) {
             if (fullNamePart.Parts.Length == 1) {
             } else {
@@ -273,10 +319,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                             listMissingGenericArgument.Add(genericArgument);
                         }
                     }
-                    var missingGenericArgument =
-                        listMissingGenericArgument.Count == 0
-                        ? ""
-                        : ("<" + string.Join(", ", listMissingGenericArgument) + ">");
+                    var missingGenericArgument = GenericArgumentToString(listMissingGenericArgument);
 
                     sb.AppendLine($"    public {upgradeType.ClassName} As{upgradeType.MethodName}{missingGenericArgument}() {{");
 
@@ -342,39 +385,40 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             }
         }
 
-        // construction
+        // generated 4 Construction
 
         foreach (var fullNamePart in listFullNamePart) {
             StringBuilder sb = getFile($"Datum.{fullNamePart.FileName}.Construction.cs");
 
-            //System.Console.WriteLine(fullNamePart.FileName);
-            //System.Console.WriteLine(fullNamePart.ClassName);
             sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
             sb.AppendLine("");
-            sb.AppendLine("// generated 4 Construction");
+            sb.AppendLine("// generated 4");
             sb.AppendLine("");
             sb.AppendLine("public static partial class Datum {");
 
             if (fullNamePart.Parts.Length == 1) {
-                sb.AppendLine("/*");
+                sb.AppendLine("// generated 4 Construction");
+                sb.AppendLine("");
+                var part = fullNamePart.Parts[0];
                 sb.AppendLine("    public static ", fullNamePart.ClassName, " As", fullNamePart.ClassName, "(");
-                //sb.AppendLine("        this ", partIndex.Item.ClassName, " ", partIndex.Item.ArgName);
-                //sb.AppendLine("    ) {");
-                //sb.AppendLine("        return new ", fullNamePart.ClassName, "(");
-                //sb.AppendLine("           ", fullNamePart.ModeName, ".", partIndex.Item.EnumName, ",");
-                //foreach (var partIndexParameter in fullNamePart.Parts.ToListIndex()) {
-                //    if (partIndex.index == partIndexParameter.index) {
-                //        sb.AppendLine("           ", partIndexParameter.Item.ArgName, partIndexParameter.isLast ? "" : ",");
-                //    } else {
-                //        sb.AppendLine("           default ", partIndexParameter.isLast ? "" : ",");
-                //    }
-                //}
-                //sb.AppendLine("        );");
-                //sb.AppendLine("    }");
-                sb.AppendLine("*/");
+                foreach (var li in fullNamePart.Parameters.ToListIndex()) {
+                    if (li.Item.ParameterMode == ParameterMode.Value) {
+                        sb.AppendLine("        this ", li.Item.ToString(), li.isLast ? "" : ",");
+                    } else {
+                        sb.AppendLine("        ", li.Item.ToString(), li.isLast ? "" : ",");
+                    }
+                }
+                sb.AppendLine("    ) {");
+                sb.Append("        return new ", fullNamePart.ClassName, "(");
+                foreach (var li in fullNamePart.Parameters.ToListIndex()) {
+                    sb.Append(li.Item.Name, li.isLast ? "" : ", ");
+                }
+                sb.AppendLine(");");
+                sb.AppendLine("    }");
             } else {
-                //foreach (var itemDowngrade in fullNamePart.ListDowngrade.ToListIndex()) {
                 foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                    sb.AppendLine("");
+                    sb.AppendLine("    // generated 4 Construction");
                     sb.AppendLine("    public static ", fullNamePart.ClassName, " As", fullNamePart.ClassName, "(");
                     sb.AppendLine("        this ", partIndex.Item.ClassName, " ", partIndex.Item.ArgName);
                     sb.AppendLine("    ) {");
@@ -384,31 +428,65 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         if (partIndex.index == partIndexParameter.index) {
                             sb.AppendLine("           ", partIndexParameter.Item.ArgName, partIndexParameter.isLast ? "" : ",");
                         } else {
-                            sb.AppendLine("           default ", partIndexParameter.isLast ? "" : ",");
+                            sb.AppendLine("           default", partIndexParameter.isLast ? "" : ",");
                         }
                     }
                     sb.AppendLine("        );");
                     sb.AppendLine("    }");
                 }
             }
+
+            if (iTypeValueError == (fullNamePart.iType & iTypeValueError)) {
+                sb.AppendLine("");
+                sb.AppendLine("    // generated 4 TryCatch");
+                var genericArguments = string.Join(", ", fullNamePart.ListGenericArgument);
+                sb.AppendLine("    public static ", fullNamePart.ClassName, " TryCatch<", genericArguments, ">(this Func<", fullNamePart.ClassName, "> fn) {");
+                sb.AppendLine("        try {");
+                sb.AppendLine("            return fn();");
+                sb.AppendLine("        } catch (Exception error) {");
+                sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNamePart.ClassName, "();");
+                sb.AppendLine("        }");
+                sb.AppendLine("    }");
+                sb.AppendLine("");
+                sb.AppendLine("    public static ", fullNamePart.ClassName, " TryCatch<", genericArguments, ", A>(this A arg, Func<A, ", fullNamePart.ClassName, "> fn) {");
+                sb.AppendLine("        try {");
+                sb.AppendLine("            return fn(arg);");
+                sb.AppendLine("        } catch (Exception error) {");
+                sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNamePart.ClassName, "();");
+                sb.AppendLine("        }");
+                sb.AppendLine("    }");
+                sb.AppendLine("");
+                sb.AppendLine("    public static async Task<", fullNamePart.ClassName, "> TryCatch", GenericArgumentToString(fullNamePart.ListGenericArgument), "(this Task<", fullNamePart.ClassName, "> value) {");
+                sb.AppendLine("        try {");
+                sb.AppendLine("            return await value;");
+                sb.AppendLine("        } catch (Exception error) {");
+                sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNamePart.ClassName, "();");
+                sb.AppendLine("        }");
+                sb.AppendLine("    }");
+                sb.AppendLine("");
+                sb.AppendLine("");
+            }
+
             sb.AppendLine("}");
         }
+
+        // generated 5
 
         foreach (var fullNamePart in listFullNamePart) {
             StringBuilder sb = getFile($"{fullNamePart.FileName}.Operator.cs");
 
-            //System.Console.WriteLine(fullNamePart.FileName);
-            //System.Console.WriteLine(fullNamePart.ClassName);
             sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
             sb.AppendLine("");
-            sb.AppendLine("// generated 5 Operator");
+            sb.AppendLine("// generated 5");
             sb.AppendLine("");
             sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, " {");
 
             if (fullNamePart.Parts.Length == 1) {
             } else {
                 foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
-
+                    sb.AppendLine("");
+                    sb.AppendLine("    // generated 5 Operator");
+                    sb.AppendLine("");
                     sb.AppendLine("     public static explicit operator ", partIndex.Item.ClassName, "(", fullNamePart.ClassName, " value) {");
                     sb.AppendLine("        return (value.Mode switch {");
                     sb.AppendLine("            ", fullNamePart.ModeTypeName, ".", partIndex.Item.EnumValueName, " => value.", partIndex.Item.PartName, ",");
@@ -416,41 +494,41 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("        });");
                     sb.AppendLine("    }");
                 }
-
-                //foreach (var itemDowngrade in fullNamePart.ListDowngrade.ToListIndex()) {
-                //foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
-                //    sb.AppendLine("    public static ", fullNamePart.ClassName, " As", fullNamePart.ClassName, "(");
-                //    sb.AppendLine("        this ", partIndex.Item.ClassName, " ", partIndex.Item.ArgName);
-                //    sb.AppendLine("    ) {");
-                //    sb.AppendLine("        return new ", fullNamePart.ClassName, "(");
-                //    sb.AppendLine("           ", fullNamePart.ModeName, ".", partIndex.Item.EnumName, ",");
-                //    foreach (var partIndexParameter in fullNamePart.Parts.ToListIndex()) {
-                //        if (partIndex.index == partIndexParameter.index) {
-                //            sb.AppendLine("           ", partIndexParameter.Item.ArgName, partIndexParameter.isLast ? "" : ",");
-                //        } else {
-                //            sb.AppendLine("           default ", partIndexParameter.isLast ? "" : ",");
-                //        }
-                //    }
-                //    sb.AppendLine("        );");
-                //    sb.AppendLine("    }");
-                //}
-                /*
-                */
             }
+
+            sb.AppendLine("");
+            sb.AppendLine("    // generated 5 switch");
+            sb.AppendLine("");
+            var listOutGenericArgument = fullNamePart.ListGenericArgument.Select(a => $"O{a}").ToList();
+            var csvOutGenericArgument = GenericArgumentToString(listOutGenericArgument);
+            var fullNameOut = fullNamePart.GetClassNameWithGenericArgument(listOutGenericArgument);
+            sb.AppendLine("/*");
+            sb.AppendLine("    public static ", fullNameOut, " Switch<", csvOutGenericArgument, ">(");
+            sb.AppendLine("    public static ValueFailureErrorDatum<V, F> Switch<V, F>(");
+            sb.AppendLine("        this ValueFailureErrorDatum<V, F> value,");
+            sb.AppendLine("        ValueFailureErrorDatum<V, F> defaultValue,");
+            sb.AppendLine("        Func<ValueDatum<V>, ValueFailureErrorDatum<V, F>>? valueFunc,");
+            sb.AppendLine("        Func<FailureDatum<F>, ValueFailureErrorDatum<V, F>>? failureFunc,");
+            sb.AppendLine("        Func<ErrorDatum, ValueFailureErrorDatum<V, F>>? errorFunc");
+            sb.AppendLine("        ) {");
+            sb.AppendLine("        try {");
+            sb.AppendLine("            return value.Mode switch {");
+            sb.AppendLine("                ValueFailureErrorMode.Value => (valueFunc is not null) ? valueFunc(value.Value) : defaultValue,");
+            sb.AppendLine("                ValueFailureErrorMode.Failure => (failureFunc is not null) ? failureFunc(value.Failure) : value,");
+            sb.AppendLine("                ValueFailureErrorMode.Error => (errorFunc is not null) ? errorFunc(value.Error):value,");
+            sb.AppendLine("                _ => defaultValue");
+            sb.AppendLine("            };");
+            sb.AppendLine("        } catch (Exception error) {");
+            sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).AsValueFailureErrorDatum<V, F>();");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine("*/");
+            sb.AppendLine("");
+
             sb.AppendLine("}");
         }
 
-        /*
-        public enum OptionalValueDatumMode { NoValue, Success }
 
-        [DebuggerNonUserCode]
-        [method: JsonConstructor]
-        public readonly partial record struct OptionalValueDatum<T>(
-                OptionalValueDatumMode Mode,
-                [property: AllowNull][AllowNull] NoDatum NoValue,
-                [property: AllowNull][AllowNull] ValueDatum<T> ValueDatum
-            )
-            */
         foreach (var kvFile in dictFile) {
             System.IO.File.WriteAllText(
                 System.IO.Path.Combine(targetPath, kvFile.Key),
@@ -467,11 +545,17 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         }
     }
 
+    private static string GenericArgumentToString(List<string> listGenericArgument) {
+        return listGenericArgument.Count == 0
+            ? ""
+            : ("<" + string.Join(", ", listGenericArgument) + ">");
+    }
+
     public static string GetFolder([CallerFilePath] string? filePath = default) {
         return System.IO.Path.GetDirectoryName(filePath) ?? string.Empty;
     }
 }
-public record NamePart(Type Type, string PartName, string ArgName, string EnumValueName, string ClassName, string GenericTypeArgName, string FileName) {
+public record NamePart(int iType, Type Type, string PartName, string ArgName, string EnumValueName, string ClassName, string GenericTypeArgName, string FileName) {
     public List<Parameter> Parameters { get; } = new();
     public override string ToString() {
         return this.PartName;
@@ -484,8 +568,18 @@ public record FullNamePart(int iType, NamePart[] Parts) {
 
     public string ClassName { get; set; } = string.Empty;
 
-    public List<Parameter> Parameters { get; } = new();
+    public string ClassNameNoGenericArgument { get; set; } = string.Empty;
 
+    public string GetClassNameWithGenericArgument(List<string> listGenericArgument) {
+        if (listGenericArgument.Count == 0) {
+            return this.ClassNameNoGenericArgument;
+        } else {
+            var csvGenericArgument = string.Join(", ", listGenericArgument);
+            return $"{this.ClassNameNoGenericArgument}<{csvGenericArgument}>";
+        }
+    }
+
+    public List<Parameter> Parameters { get; } = new();
 
     public List<string> ListGenericArgument { get; } = new();
 
@@ -549,16 +643,18 @@ public record Downgrade(FullNamePart extractType, FullNamePart upgradeType);
 public enum ParameterMode { Mode, Value, AdditionalValue, CaseValue, Meaning, LogicalTimestamp, IsLogged }
 public record Parameter(
     string ParameterType,
+    bool Nullable,
     string Name,
     bool HasDefaultValue,
     object? DefaultValue
     ) {
     public ParameterMode ParameterMode { get; set; }
     public override string ToString() {
+        var q = this.Nullable ? "?" : "";
         if (this.HasDefaultValue) {
-            return $"{this.ParameterType} {this.Name} = default";
+            return $"{this.ParameterType}{q} {this.Name} = default";
         } else {
-            return $"{this.ParameterType} {this.Name}";
+            return $"{this.ParameterType}{q} {this.Name}";
         }
     }
 }
