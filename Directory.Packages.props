@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting" Version="8.0.0-preview.1.23557.2" />
     <PackageVersion Include="Cocona" Version="2.2.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.CommandLine" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />

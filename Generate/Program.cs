@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Primitives;
+
+using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
@@ -297,13 +299,13 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         // generated 3 Upgrade
 
         foreach (var fullNamePart in listFullNamePart) {
-                StringBuilder sb = getFile($"{fullNamePart.FileName}.Upgrade.cs");
+            StringBuilder sb = getFile($"{fullNamePart.FileName}.Upgrade.cs");
 
-                sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
-                sb.AppendLine("");
-                sb.AppendLine("// generated 3");
-                sb.AppendLine("");
-                sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "{");
+            sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
+            sb.AppendLine("");
+            sb.AppendLine("// generated 3");
+            sb.AppendLine("");
+            sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "{");
             if (fullNamePart.Parts.Length == 1) {
             } else {
                 foreach (var (extractType, upgradeType) in fullNamePart.ListUpgrade) {
@@ -388,6 +390,50 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         return value.AsOptionalFailureErrorDatum();
                     } 
                 */
+            }
+            //
+            foreach (var kvFullNamePart in dictFullNamePart) {
+                var iType = kvFullNamePart.Key;
+                var downFullNamePart = kvFullNamePart.Value;
+                if ((iType != fullNamePart.iType)
+                    && (iType == (iType & fullNamePart.iType))) {
+                } else {
+                    continue;
+                }
+                sb.AppendLine("");
+                sb.AppendLine("    // generated 3 type cast");
+                sb.AppendLine("");
+                sb.AppendLine("    public static implicit operator ", fullNamePart.ClassName, "(", downFullNamePart.ClassName, " value) {");
+                if (downFullNamePart.Parts.Length == 1) {
+                    var part = downFullNamePart.Parts[0];
+                    /**/
+                    sb.Append("        return new ", fullNamePart.ClassName, "(", fullNamePart.ModeTypeName, ".", part.ModeEnumValueName);
+                    foreach (var fullNamePartPart in fullNamePart.Parts) {
+                        if (fullNamePartPart.ModeEnumValueName == part.ModeEnumValueName) {
+                            sb.Append(", value");
+                        } else {
+                            sb.Append(", default");
+                        }
+                    }
+                    sb.AppendLine(");");
+                } else {
+                    sb.AppendLine("        return (value.Mode) switch {");
+                    foreach(var part in downFullNamePart.Parts) {
+                        // downFullNamePart.ModeTypeName, ".", part.ModeEnumValueName, " => new ", fullNamePart.ClassName, "(", fullNamePart.ModeTypeName, ".", part.ModeEnumValueName);
+                        sb.Append("            ", downFullNamePart.ModeTypeName,".",part.ModeEnumValueName, " => new ", fullNamePart.ClassName, "(", fullNamePart.ModeTypeName, ".", part.ModeEnumValueName);
+                        foreach (var fullNamePartPart in fullNamePart.Parts) {
+                            if (fullNamePartPart.ModeEnumValueName == part.ModeEnumValueName) {
+                                sb.Append(", value.", part.PartName);
+                            } else {
+                                sb.Append(", default");
+                            }
+                        }
+                        sb.AppendLine("),");
+                    }
+                    sb.AppendLine("            _ => throw new InvalidCastException()");
+                    sb.AppendLine("        };");
+                }
+                sb.AppendLine("    }");
             }
             sb.AppendLine("}");
         }
@@ -503,55 +549,57 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 }
             }
 
-            sb.AppendLine("");
-            sb.AppendLine("    // generated 5 switch");
-            sb.AppendLine("");
-            var listOutGenericArgument = fullNamePart.ListGenericArgument.Select(a => $"O{a}").ToList();
-            var csvOutGenericArgument = GenericArgumentToString(listOutGenericArgument);
-            var fullNameOut = fullNamePart.GetClassNameWithGenericArgument(listOutGenericArgument);
-            var hasError = fullNamePart.Parts.Any(p => p.iType == iTypeError);
-            sb.AppendLine("    public ", fullNameOut, " Switch", csvOutGenericArgument, "(");
-            sb.AppendLine("        ", fullNameOut, " defaultValue,");
-            foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
-                var funcName = $"func{partIndex.Item.PartName}";
-                if (partIndex.Item.iType == iTypeOptional) {
-                    sb.AppendLine("        Func<", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+            if (fullNamePart.Parts.Length == 1) {
+            } else {
+                sb.AppendLine("");
+                sb.AppendLine("    // generated 5 switch");
+                sb.AppendLine("");
+                var listOutGenericArgument = fullNamePart.ListGenericArgument.Select(a => $"O{a}").ToList();
+                var csvOutGenericArgument = GenericArgumentToString(listOutGenericArgument);
+                var fullNameOut = fullNamePart.GetClassNameWithGenericArgument(listOutGenericArgument);
+                var hasError = fullNamePart.Parts.Any(p => p.iType == iTypeError);
+                sb.AppendLine("    public ", fullNameOut, " Switch", csvOutGenericArgument, "(");
+                sb.AppendLine("        ", fullNameOut, " defaultValue,");
+                foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                    var funcName = $"func{partIndex.Item.PartName}";
+                    if (partIndex.Item.iType == iTypeOptional) {
+                        sb.AppendLine("        Func<", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                    } else {
+                        sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                    }
+                }
+                sb.AppendLine("        ) {");
+                if (hasError) {
+                    sb.AppendLine("        try {");
                 } else {
-                    sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                    sb.AppendLine("        {");
                 }
-            }
-            sb.AppendLine("        ) {");
-            if (hasError) {
-                sb.AppendLine("        try {");
-            } else {
-                sb.AppendLine("        {");
-            }
-            sb.AppendLine("            return (this.Mode) switch {");
-            foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
-                var funcName = $"func{partIndex.Item.PartName}";
-                sb.Append("                ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => ");
-                if (partIndex.Item.iType == iTypeOptional) {
-                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "() : defaultValue,");
-                } else if (partIndex.Item.iType == iTypeValue) {
-                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Value) : defaultValue,");
-                } else if (partIndex.Item.iType == iTypeFailure) {
-                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Failure) : defaultValue,");
-                } else if (partIndex.Item.iType == iTypeError) {
-                    sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Error) : this.Error,");
+                sb.AppendLine("            return (this.Mode) switch {");
+                foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                    var funcName = $"func{partIndex.Item.PartName}";
+                    sb.Append("                ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => ");
+                    if (partIndex.Item.iType == iTypeOptional) {
+                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "() : defaultValue,");
+                    } else if (partIndex.Item.iType == iTypeValue) {
+                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Value) : defaultValue,");
+                    } else if (partIndex.Item.iType == iTypeFailure) {
+                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Failure) : defaultValue,");
+                    } else if (partIndex.Item.iType == iTypeError) {
+                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Error) : this.Error,");
+                    }
                 }
+                sb.AppendLine("            _ => defaultValue");
+                sb.AppendLine("            };");
+                if (hasError) {
+                    sb.AppendLine("        } catch (Exception error) {");
+                    sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNameOut, "();");
+                    sb.AppendLine("        }");
+                } else {
+                    sb.AppendLine("        }");
+                }
+                sb.AppendLine("    }");
+                sb.AppendLine("");
             }
-            sb.AppendLine("            _ => defaultValue");
-            sb.AppendLine("            };");
-            if (hasError) {
-                sb.AppendLine("        } catch (Exception error) {");
-                sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNameOut, "();");
-                sb.AppendLine("        }");
-            } else {
-                sb.AppendLine("        }");
-            }
-            sb.AppendLine("    }");
-            sb.AppendLine("");
-
             sb.AppendLine("}");
         }
 
