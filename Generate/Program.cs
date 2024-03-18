@@ -310,15 +310,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             } else {
                 foreach (var (extractType, upgradeType) in fullNamePart.ListUpgrade) {
                     // sb.AppendLine($"//    extractType:{extractType.ClassName} upgradeType:{upgradeType.ClassName}");
-
-                    List<string> listMissingGenericArgument = new();
-                    foreach (var genericArgument in upgradeType.ListGenericArgument) {
-                        if (fullNamePart.ListGenericArgument.Contains(genericArgument)) {
-                            // skip
-                        } else {
-                            listMissingGenericArgument.Add(genericArgument);
-                        }
-                    }
+                   
+                    var listMissingGenericArgument = CalsListMissingGenericArgument(upgradeType.ListGenericArgument, fullNamePart.ListGenericArgument);
                     var missingGenericArgument = GenericArgumentToString(listMissingGenericArgument);
                     sb.AppendLine("");
                     sb.AppendLine("// generated 3 Upgrade");
@@ -418,9 +411,9 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine(");");
                 } else {
                     sb.AppendLine("        return (value.Mode) switch {");
-                    foreach(var part in downFullNamePart.Parts) {
+                    foreach (var part in downFullNamePart.Parts) {
                         // downFullNamePart.ModeTypeName, ".", part.ModeEnumValueName, " => new ", fullNamePart.ClassName, "(", fullNamePart.ModeTypeName, ".", part.ModeEnumValueName);
-                        sb.Append("            ", downFullNamePart.ModeTypeName,".",part.ModeEnumValueName, " => new ", fullNamePart.ClassName, "(", fullNamePart.ModeTypeName, ".", part.ModeEnumValueName);
+                        sb.Append("            ", downFullNamePart.ModeTypeName, ".", part.ModeEnumValueName, " => new ", fullNamePart.ClassName, "(", fullNamePart.ModeTypeName, ".", part.ModeEnumValueName);
                         foreach (var fullNamePartPart in fullNamePart.Parts) {
                             if (fullNamePartPart.ModeEnumValueName == part.ModeEnumValueName) {
                                 sb.Append(", value.", part.PartName);
@@ -476,12 +469,12 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("        this ", partIndex.Item.ClassName, " ", partIndex.Item.ArgName);
                     sb.AppendLine("    ) {");
                     sb.AppendLine("        return new ", fullNamePart.ClassName, "(");
-                    sb.AppendLine("           ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, ",");
+                    sb.AppendLine("            ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, ",");
                     foreach (var partIndexParameter in fullNamePart.Parts.ToListIndex()) {
                         if (partIndex.index == partIndexParameter.index) {
-                            sb.AppendLine("           ", partIndexParameter.Item.ArgName, partIndexParameter.isLast ? "" : ",");
+                            sb.AppendLine("            ", partIndexParameter.Item.ArgName, partIndexParameter.isLast ? "" : ",");
                         } else {
-                            sb.AppendLine("           default", partIndexParameter.isLast ? "" : ",");
+                            sb.AppendLine("            default", partIndexParameter.isLast ? "" : ",");
                         }
                     }
                     sb.AppendLine("        );");
@@ -534,72 +527,106 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             sb.AppendLine("");
             sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, " {");
 
-            if (fullNamePart.Parts.Length == 1) {
-            } else {
-                foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
-                    sb.AppendLine("");
-                    sb.AppendLine("    // generated 5 Operator");
-                    sb.AppendLine("");
-                    sb.AppendLine("     public static explicit operator ", partIndex.Item.ClassName, "(", fullNamePart.ClassName, " value) {");
-                    sb.AppendLine("        return (value.Mode switch {");
-                    sb.AppendLine("            ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => value.", partIndex.Item.PartName, ",");
-                    sb.AppendLine("            _ => throw new InvalidCastException()");
-                    sb.AppendLine("        });");
-                    sb.AppendLine("    }");
+            {
+                if (fullNamePart.Parts.Length == 1) {
+                } else {
+                    foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                        sb.AppendLine("");
+                        sb.AppendLine("    // generated 5 Operator");
+                        sb.AppendLine("");
+                        sb.AppendLine("    public static explicit operator ", partIndex.Item.ClassName, "(", fullNamePart.ClassName, " value) {");
+                        sb.AppendLine("        return (value.Mode switch {");
+                        sb.AppendLine("            ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => value.", partIndex.Item.PartName, ",");
+                        sb.AppendLine("            _ => throw new InvalidCastException()");
+                        sb.AppendLine("        });");
+                        sb.AppendLine("    }");
+                    }
                 }
             }
-
-            if (fullNamePart.Parts.Length == 1) {
-            } else {
-                sb.AppendLine("");
-                sb.AppendLine("    // generated 5 switch");
-                sb.AppendLine("");
-                var listOutGenericArgument = fullNamePart.ListGenericArgument.Select(a => $"O{a}").ToList();
-                var csvOutGenericArgument = GenericArgumentToString(listOutGenericArgument);
-                var fullNameOut = fullNamePart.GetClassNameWithGenericArgument(listOutGenericArgument);
-                var hasError = fullNamePart.Parts.Any(p => p.iType == iTypeError);
-                sb.AppendLine("    public ", fullNameOut, " Switch", csvOutGenericArgument, "(");
-                sb.AppendLine("        ", fullNameOut, " defaultValue,");
-                foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
-                    var funcName = $"func{partIndex.Item.PartName}";
-                    if (partIndex.Item.iType == iTypeOptional) {
-                        sb.AppendLine("        Func<", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+            {
+                if (fullNamePart.Parts.Length == 1) {
+                } else {
+                    sb.AppendLine("");
+                    sb.AppendLine("    // generated 5 Then");
+                    sb.AppendLine("");
+                    var listOutGenericArgument = fullNamePart.ListGenericArgument.Select(a => $"O{a}").ToList();
+                    var csvOutGenericArgument = GenericArgumentToString(listOutGenericArgument);
+                    var fullNameOut = fullNamePart.GetClassNameWithGenericArgument(listOutGenericArgument);
+                    var hasError = fullNamePart.Parts.Any(p => p.iType == iTypeError);
+                    sb.AppendLine("    public ", fullNameOut, " Then", csvOutGenericArgument, "(");
+                    sb.AppendLine("        ", fullNameOut, " defaultValue,");
+                    foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                        var funcName = $"func{partIndex.Item.PartName}";
+                        if (partIndex.Item.iType == iTypeOptional) {
+                            sb.AppendLine("        Func<", fullNameOut, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                        } else {
+                            sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                        }
+                    }
+                    sb.AppendLine("        ) {");
+                    if (hasError) {
+                        sb.AppendLine("        try {");
                     } else {
-                        sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                        sb.AppendLine("        {");
                     }
-                }
-                sb.AppendLine("        ) {");
-                if (hasError) {
-                    sb.AppendLine("        try {");
-                } else {
-                    sb.AppendLine("        {");
-                }
-                sb.AppendLine("            return (this.Mode) switch {");
-                foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
-                    var funcName = $"func{partIndex.Item.PartName}";
-                    sb.Append("                ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => ");
-                    if (partIndex.Item.iType == iTypeOptional) {
-                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "() : defaultValue,");
-                    } else if (partIndex.Item.iType == iTypeValue) {
-                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Value) : defaultValue,");
-                    } else if (partIndex.Item.iType == iTypeFailure) {
-                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Failure) : defaultValue,");
-                    } else if (partIndex.Item.iType == iTypeError) {
-                        sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Error) : this.Error,");
+                    sb.AppendLine("            return (this.Mode) switch {");
+                    foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
+                        var funcName = $"func{partIndex.Item.PartName}";
+                        sb.Append("                ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => ");
+                        if (partIndex.Item.iType == iTypeOptional) {
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(defaultValue) : defaultValue,");
+                        } else if (partIndex.Item.iType == iTypeValue) {
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Value, defaultValue) : defaultValue,");
+                        } else if (partIndex.Item.iType == iTypeFailure) {
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Failure, defaultValue) : defaultValue,");
+                        } else if (partIndex.Item.iType == iTypeError) {
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Error, defaultValue) : this.Error,");
+                        }
                     }
+                    sb.AppendLine("            _ => defaultValue");
+                    sb.AppendLine("            };");
+                    if (hasError) {
+                        sb.AppendLine("        } catch (Exception error) {");
+                        sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNameOut, "();");
+                        sb.AppendLine("        }");
+                    } else {
+                        sb.AppendLine("        }");
+                    }
+                    sb.AppendLine("    }");
+                    sb.AppendLine("");
                 }
-                sb.AppendLine("            _ => defaultValue");
-                sb.AppendLine("            };");
-                if (hasError) {
-                    sb.AppendLine("        } catch (Exception error) {");
-                    sb.AppendLine("            return ErrorDatum.CreateFromCatchedException(error).As", fullNameOut, "();");
-                    sb.AppendLine("        }");
-                } else {
-                    sb.AppendLine("        }");
-                }
-                sb.AppendLine("    }");
-                sb.AppendLine("");
             }
+            {
+                sb.AppendLine("    //");
+                sb.AppendLine("    // generated 5 with");
+                sb.AppendLine("    //");
+                foreach (var partIndex in listAllParts.ToListIndex()) {
+                    var part = partIndex.Item;
+                    var resultiType = part.iType | fullNamePart.iType;
+                    if (dictFullNamePart.TryGetValue(resultiType, out var fullNamePartResult)) {
+                        var listMissingGenericArgument = CalsListMissingGenericArgument(fullNamePartResult.ListGenericArgument, fullNamePart.ListGenericArgument);
+                        var missingGenericArgument = GenericArgumentToString(listMissingGenericArgument);
+
+                        sb.AppendLine("    public ", fullNamePartResult.ClassName, " With", part.PartName, missingGenericArgument,"(",part.ClassName, " value)");
+                        if (fullNamePartResult.Parts.Length == 1) {
+                            sb.AppendLine("        => value;");
+                        } else {
+                            sb.Append("        => new ", fullNamePartResult.ClassName, "(");
+                            sb.Append(fullNamePartResult.ModeTypeName, ".", part.ModeEnumValueName);
+                            foreach (var resultPart in fullNamePartResult.Parts) { 
+                                if (resultPart.ModeEnumValueName == part.ModeEnumValueName) {
+                                    sb.Append(", value");
+                                } else {
+                                    sb.Append(", default");
+                                }
+                            }
+                            sb.AppendLine(");");
+                        }
+                        sb.AppendLine("");
+                    }
+                }
+            }
+            //
             sb.AppendLine("}");
         }
 
@@ -619,6 +646,18 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 return sb;
             }
         }
+    }
+
+    private static List<string> CalsListMissingGenericArgument(List<string> listOtherGenericArgument, List<string> listFullGenericArgument) {
+        List<string> listMissingGenericArgument = new();
+        foreach (var genericArgument in listOtherGenericArgument) {
+            if (listFullGenericArgument.Contains(genericArgument)) {
+                // skip
+            } else {
+                listMissingGenericArgument.Add(genericArgument);
+            }
+        }
+        return listMissingGenericArgument;
     }
 
     private static string GenericArgumentToString(List<string> listGenericArgument) {
