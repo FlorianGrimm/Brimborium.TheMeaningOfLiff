@@ -6,9 +6,9 @@ public readonly partial record struct OptionalFailureErrorDatum<F>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptional(out NoDatum optional){
+    public bool TryGetOptionalDatum(out NoDatum optional){
         if (this.Mode == OptionalFailureErrorMode.NoValue) {
-            optional = this.Optional;
+            optional = this.OptionalDatum;
             return true;
         } else {
             optional = default;
@@ -16,9 +16,9 @@ public readonly partial record struct OptionalFailureErrorDatum<F>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out FailureErrorDatum<F> failureErrorDatum){
+    public bool TryGetOptionalDatum(out NoDatum optionalDatum, out FailureErrorDatum<F> failureErrorDatum){
         if (this.Mode == OptionalFailureErrorMode.NoValue) {
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             failureErrorDatum = default;
             return true;
         } else {
@@ -29,16 +29,16 @@ public readonly partial record struct OptionalFailureErrorDatum<F>{
                     OptionalFailureErrorMode.Error => FailureErrorMode.Error,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Failure,
-                this.Error
+                this.FailureDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failure){
+    public bool TryGetFailureDatum(out FailureDatum<F> failure){
         if (this.Mode == OptionalFailureErrorMode.Failure) {
-            failure = this.Failure;
+            failure = this.FailureDatum;
             return true;
         } else {
             failure = default;
@@ -46,9 +46,9 @@ public readonly partial record struct OptionalFailureErrorDatum<F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failureDatum, out OptionalErrorDatum optionalErrorDatum){
+    public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out OptionalErrorDatum optionalErrorDatum){
         if (this.Mode == OptionalFailureErrorMode.Failure) {
-            failureDatum = this.Failure;
+            failureDatum = this.FailureDatum;
             optionalErrorDatum = default;
             return true;
         } else {
@@ -59,16 +59,16 @@ public readonly partial record struct OptionalFailureErrorDatum<F>{
                     OptionalFailureErrorMode.Error => OptionalErrorMode.Error,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Optional,
-                this.Error
+                this.OptionalDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetError(out ErrorDatum error){
+    public bool TryGetErrorDatum(out ErrorDatum error){
         if (this.Mode == OptionalFailureErrorMode.Error) {
-            error = this.Error;
+            error = this.ErrorDatum;
             return true;
         } else {
             error = default;
@@ -76,9 +76,9 @@ public readonly partial record struct OptionalFailureErrorDatum<F>{
         }
     }
 
-    public bool TryGetError(out ErrorDatum errorDatum, out OptionalFailureDatum<F> optionalFailureDatum){
+    public bool TryGetErrorDatum(out ErrorDatum errorDatum, out OptionalFailureDatum<F> optionalFailureDatum){
         if (this.Mode == OptionalFailureErrorMode.Error) {
-            errorDatum = this.Error;
+            errorDatum = this.ErrorDatum;
             optionalFailureDatum = default;
             return true;
         } else {
@@ -89,11 +89,12 @@ public readonly partial record struct OptionalFailureErrorDatum<F>{
                     OptionalFailureErrorMode.Failure => OptionalFailureMode.Failure,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Optional,
-                this.Failure
+                this.OptionalDatum,
+                this.FailureDatum
                 );
             return false;
         }
     }
 
 }
+// generated 2 Downgrade

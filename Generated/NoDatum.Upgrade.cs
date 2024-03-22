@@ -4,3 +4,5 @@ namespace Brimborium.TheMeaningOfLiff;
 
 public readonly partial record struct NoDatum{
 }
+
+    // generated 3 type cast

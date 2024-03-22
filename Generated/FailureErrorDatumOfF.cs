@@ -8,21 +8,23 @@ public enum FailureErrorMode { Failure, Error }
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct FailureErrorDatum<F>(
     FailureErrorMode Mode,
-    FailureDatum<F> Failure,
-    ErrorDatum Error
+    FailureDatum<F> FailureDatum,
+    ErrorDatum ErrorDatum
 ) : IWithMeaning, ILogicalTimestamp {
     private string GetDebuggerDisplay() => this.ToString();
 
-    public Brimborium.TheMeaningOfLiff.Meaning? Meaning => this.Mode switch {
-        FailureErrorMode.Failure => this.Failure.Meaning,
-        FailureErrorMode.Error => this.Error.Meaning,
+    public Meaning? Meaning => this.Mode switch {
+        FailureErrorMode.Failure => this.FailureDatum.Meaning,
+        FailureErrorMode.Error => this.ErrorDatum.Meaning,
         _ => default
     };
 
     public long LogicalTimestamp => this.Mode switch {
-        FailureErrorMode.Failure => this.Failure.LogicalTimestamp,
-        FailureErrorMode.Error => this.Error.LogicalTimestamp,
+        FailureErrorMode.Failure => this.FailureDatum.LogicalTimestamp,
+        FailureErrorMode.Error => this.ErrorDatum.LogicalTimestamp,
         _ => default
     };
 
 }
+
+// generated 1 type

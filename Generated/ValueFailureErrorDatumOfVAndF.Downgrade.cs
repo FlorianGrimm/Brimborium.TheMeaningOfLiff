@@ -6,9 +6,9 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetValue(out ValueDatum<V> value){
+    public bool TryGetValueDatum(out ValueDatum<V> value){
         if (this.Mode == ValueFailureErrorMode.Value) {
-            value = this.Value;
+            value = this.ValueDatum;
             return true;
         } else {
             value = default;
@@ -16,9 +16,9 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> valueDatum, out FailureErrorDatum<F> failureErrorDatum){
+    public bool TryGetValueDatum(out ValueDatum<V> valueDatum, out FailureErrorDatum<F> failureErrorDatum){
         if (this.Mode == ValueFailureErrorMode.Value) {
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             failureErrorDatum = default;
             return true;
         } else {
@@ -29,16 +29,16 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
                     ValueFailureErrorMode.Error => FailureErrorMode.Error,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Failure,
-                this.Error
+                this.FailureDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failure){
+    public bool TryGetFailureDatum(out FailureDatum<F> failure){
         if (this.Mode == ValueFailureErrorMode.Failure) {
-            failure = this.Failure;
+            failure = this.FailureDatum;
             return true;
         } else {
             failure = default;
@@ -46,9 +46,9 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failureDatum, out ValueErrorDatum<V> valueErrorDatum){
+    public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out ValueErrorDatum<V> valueErrorDatum){
         if (this.Mode == ValueFailureErrorMode.Failure) {
-            failureDatum = this.Failure;
+            failureDatum = this.FailureDatum;
             valueErrorDatum = default;
             return true;
         } else {
@@ -59,16 +59,16 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
                     ValueFailureErrorMode.Error => ValueErrorMode.Error,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Value,
-                this.Error
+                this.ValueDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetError(out ErrorDatum error){
+    public bool TryGetErrorDatum(out ErrorDatum error){
         if (this.Mode == ValueFailureErrorMode.Error) {
-            error = this.Error;
+            error = this.ErrorDatum;
             return true;
         } else {
             error = default;
@@ -76,9 +76,9 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
         }
     }
 
-    public bool TryGetError(out ErrorDatum errorDatum, out ValueFailureDatum<V, F> valueFailureDatum){
+    public bool TryGetErrorDatum(out ErrorDatum errorDatum, out ValueFailureDatum<V, F> valueFailureDatum){
         if (this.Mode == ValueFailureErrorMode.Error) {
-            errorDatum = this.Error;
+            errorDatum = this.ErrorDatum;
             valueFailureDatum = default;
             return true;
         } else {
@@ -89,11 +89,12 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
                     ValueFailureErrorMode.Failure => ValueFailureMode.Failure,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Value,
-                this.Failure
+                this.ValueDatum,
+                this.FailureDatum
                 );
             return false;
         }
     }
 
 }
+// generated 2 Downgrade

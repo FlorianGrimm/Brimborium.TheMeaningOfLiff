@@ -6,9 +6,9 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptional(out NoDatum optional){
+    public bool TryGetOptionalDatum(out NoDatum optional){
         if (this.Mode == OptionalValueFailureMode.NoValue) {
-            optional = this.Optional;
+            optional = this.OptionalDatum;
             return true;
         } else {
             optional = default;
@@ -16,9 +16,9 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out ValueFailureDatum<V, F> valueFailureDatum){
+    public bool TryGetOptionalDatum(out NoDatum optionalDatum, out ValueFailureDatum<V, F> valueFailureDatum){
         if (this.Mode == OptionalValueFailureMode.NoValue) {
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             valueFailureDatum = default;
             return true;
         } else {
@@ -29,16 +29,16 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
                     OptionalValueFailureMode.Failure => ValueFailureMode.Failure,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Value,
-                this.Failure
+                this.ValueDatum,
+                this.FailureDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> value){
+    public bool TryGetValueDatum(out ValueDatum<V> value){
         if (this.Mode == OptionalValueFailureMode.Value) {
-            value = this.Value;
+            value = this.ValueDatum;
             return true;
         } else {
             value = default;
@@ -46,9 +46,9 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> valueDatum, out OptionalFailureDatum<F> optionalFailureDatum){
+    public bool TryGetValueDatum(out ValueDatum<V> valueDatum, out OptionalFailureDatum<F> optionalFailureDatum){
         if (this.Mode == OptionalValueFailureMode.Value) {
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             optionalFailureDatum = default;
             return true;
         } else {
@@ -59,16 +59,16 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
                     OptionalValueFailureMode.Failure => OptionalFailureMode.Failure,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Optional,
-                this.Failure
+                this.OptionalDatum,
+                this.FailureDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failure){
+    public bool TryGetFailureDatum(out FailureDatum<F> failure){
         if (this.Mode == OptionalValueFailureMode.Failure) {
-            failure = this.Failure;
+            failure = this.FailureDatum;
             return true;
         } else {
             failure = default;
@@ -76,9 +76,9 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failureDatum, out OptionalValueDatum<V> optionalValueDatum){
+    public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out OptionalValueDatum<V> optionalValueDatum){
         if (this.Mode == OptionalValueFailureMode.Failure) {
-            failureDatum = this.Failure;
+            failureDatum = this.FailureDatum;
             optionalValueDatum = default;
             return true;
         } else {
@@ -89,11 +89,12 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
                     OptionalValueFailureMode.Value => OptionalValueMode.Value,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Optional,
-                this.Value
+                this.OptionalDatum,
+                this.ValueDatum
                 );
             return false;
         }
     }
 
 }
+// generated 2 Downgrade

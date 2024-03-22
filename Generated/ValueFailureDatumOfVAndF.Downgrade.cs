@@ -6,9 +6,9 @@ public readonly partial record struct ValueFailureDatum<V, F>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetValue(out ValueDatum<V> value){
+    public bool TryGetValueDatum(out ValueDatum<V> value){
         if (this.Mode == ValueFailureMode.Value) {
-            value = this.Value;
+            value = this.ValueDatum;
             return true;
         } else {
             value = default;
@@ -16,21 +16,21 @@ public readonly partial record struct ValueFailureDatum<V, F>{
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> valueDatum, out FailureDatum<F> failureDatum){
+    public bool TryGetValueDatum(out ValueDatum<V> valueDatum, out FailureDatum<F> failureDatum){
         if (this.Mode == ValueFailureMode.Value) {
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             failureDatum = default;
             return true;
         } else {
             valueDatum = default;
-            failureDatum = this.Failure;
+            failureDatum = this.FailureDatum;
             return false;
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failure){
+    public bool TryGetFailureDatum(out FailureDatum<F> failure){
         if (this.Mode == ValueFailureMode.Failure) {
-            failure = this.Failure;
+            failure = this.FailureDatum;
             return true;
         } else {
             failure = default;
@@ -38,16 +38,17 @@ public readonly partial record struct ValueFailureDatum<V, F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failureDatum, out ValueDatum<V> valueDatum){
+    public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out ValueDatum<V> valueDatum){
         if (this.Mode == ValueFailureMode.Failure) {
-            failureDatum = this.Failure;
+            failureDatum = this.FailureDatum;
             valueDatum = default;
             return true;
         } else {
             failureDatum = default;
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             return false;
         }
     }
 
 }
+// generated 2 Downgrade

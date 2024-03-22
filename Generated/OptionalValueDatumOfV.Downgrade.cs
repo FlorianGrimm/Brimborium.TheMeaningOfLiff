@@ -6,9 +6,9 @@ public readonly partial record struct OptionalValueDatum<V>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptional(out NoDatum optional){
+    public bool TryGetOptionalDatum(out NoDatum optional){
         if (this.Mode == OptionalValueMode.NoValue) {
-            optional = this.Optional;
+            optional = this.OptionalDatum;
             return true;
         } else {
             optional = default;
@@ -16,21 +16,21 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out ValueDatum<V> valueDatum){
+    public bool TryGetOptionalDatum(out NoDatum optionalDatum, out ValueDatum<V> valueDatum){
         if (this.Mode == OptionalValueMode.NoValue) {
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             valueDatum = default;
             return true;
         } else {
             optionalDatum = default;
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             return false;
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> value){
+    public bool TryGetValueDatum(out ValueDatum<V> value){
         if (this.Mode == OptionalValueMode.Value) {
-            value = this.Value;
+            value = this.ValueDatum;
             return true;
         } else {
             value = default;
@@ -38,16 +38,17 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> valueDatum, out NoDatum optionalDatum){
+    public bool TryGetValueDatum(out ValueDatum<V> valueDatum, out NoDatum optionalDatum){
         if (this.Mode == OptionalValueMode.Value) {
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             optionalDatum = default;
             return true;
         } else {
             valueDatum = default;
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             return false;
         }
     }
 
 }
+// generated 2 Downgrade

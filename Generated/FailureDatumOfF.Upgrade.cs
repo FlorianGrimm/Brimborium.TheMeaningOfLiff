@@ -4,3 +4,5 @@ namespace Brimborium.TheMeaningOfLiff;
 
 public readonly partial record struct FailureDatum<F>{
 }
+
+    // generated 3 type cast

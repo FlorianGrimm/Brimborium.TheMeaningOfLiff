@@ -8,7 +8,7 @@ public readonly partial record struct OptionalValueErrorDatum<V> {
 
     public static explicit operator NoDatum(OptionalValueErrorDatum<V> value) {
         return (value.Mode switch {
-            OptionalValueErrorMode.NoValue => value.Optional,
+            OptionalValueErrorMode.NoValue => value.OptionalDatum,
             _ => throw new InvalidCastException()
         });
     }
@@ -17,7 +17,7 @@ public readonly partial record struct OptionalValueErrorDatum<V> {
 
     public static explicit operator ValueDatum<V>(OptionalValueErrorDatum<V> value) {
         return (value.Mode switch {
-            OptionalValueErrorMode.Value => value.Value,
+            OptionalValueErrorMode.Value => value.ValueDatum,
             _ => throw new InvalidCastException()
         });
     }
@@ -26,7 +26,7 @@ public readonly partial record struct OptionalValueErrorDatum<V> {
 
     public static explicit operator ErrorDatum(OptionalValueErrorDatum<V> value) {
         return (value.Mode switch {
-            OptionalValueErrorMode.Error => value.Error,
+            OptionalValueErrorMode.Error => value.ErrorDatum,
             _ => throw new InvalidCastException()
         });
     }
@@ -35,15 +35,15 @@ public readonly partial record struct OptionalValueErrorDatum<V> {
 
     public OptionalValueErrorDatum<OV> Then<OV>(
         OptionalValueErrorDatum<OV> defaultValue,
-        Func<OptionalValueErrorDatum<OV>, OptionalValueErrorDatum<OV>>? funcOptional = default,
-        Func<ValueDatum<V>, OptionalValueErrorDatum<OV>, OptionalValueErrorDatum<OV>>? funcValue = default,
-        Func<ErrorDatum, OptionalValueErrorDatum<OV>, OptionalValueErrorDatum<OV>>? funcError = default
+        Func<OptionalValueErrorDatum<OV>, OptionalValueErrorDatum<OV>>? funcOptionalDatum = default,
+        Func<ValueDatum<V>, OptionalValueErrorDatum<OV>, OptionalValueErrorDatum<OV>>? funcValueDatum = default,
+        Func<ErrorDatum, OptionalValueErrorDatum<OV>, OptionalValueErrorDatum<OV>>? funcErrorDatum = default
         ) {
         try {
             return (this.Mode) switch {
-                OptionalValueErrorMode.NoValue => (funcOptional is not null) ? funcOptional(defaultValue) : defaultValue,
-                OptionalValueErrorMode.Value => (funcValue is not null) ? funcValue(this.Value, defaultValue) : defaultValue,
-                OptionalValueErrorMode.Error => (funcError is not null) ? funcError(this.Error, defaultValue) : this.Error,
+                OptionalValueErrorMode.NoValue => (funcOptionalDatum is not null) ? funcOptionalDatum(defaultValue) : defaultValue,
+                OptionalValueErrorMode.Value => (funcValueDatum is not null) ? funcValueDatum(this.ValueDatum, defaultValue) : defaultValue,
+                OptionalValueErrorMode.Error => (funcErrorDatum is not null) ? funcErrorDatum(this.ErrorDatum, defaultValue) : this.ErrorDatum,
             _ => defaultValue
             };
         } catch (Exception error) {
@@ -54,16 +54,18 @@ public readonly partial record struct OptionalValueErrorDatum<V> {
     //
     // generated 5 with
     //
-    public OptionalValueErrorDatum<V> WithOptional(NoDatum value)
+    public OptionalValueErrorDatum<V> WithOptionalDatum(NoDatum value)
         => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.NoValue, value, default, default);
 
-    public OptionalValueErrorDatum<V> WithValue(ValueDatum<V> value)
+    public OptionalValueErrorDatum<V> WithValueDatum(ValueDatum<V> value)
         => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.Value, default, value, default);
 
-    public OptionalValueFailureErrorDatum<V, F> WithFailure<F>(FailureDatum<F> value)
+    public OptionalValueFailureErrorDatum<V, F> WithFailureDatum<F>(FailureDatum<F> value)
         => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.Failure, default, default, value, default);
 
-    public OptionalValueErrorDatum<V> WithError(ErrorDatum value)
+    public OptionalValueErrorDatum<V> WithErrorDatum(ErrorDatum value)
         => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.Error, default, default, value);
 
 }
+
+// generated 5

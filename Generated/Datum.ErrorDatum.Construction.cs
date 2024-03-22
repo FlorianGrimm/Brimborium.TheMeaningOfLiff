@@ -15,3 +15,5 @@ public static partial class Datum {
         return new ErrorDatum(Exception, ExceptionDispatchInfo, Meaning, LogicalTimestamp, IsLogged);
     }
 }
+
+// generated 4

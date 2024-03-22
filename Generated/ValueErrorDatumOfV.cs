@@ -8,21 +8,23 @@ public enum ValueErrorMode { Value, Error }
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct ValueErrorDatum<V>(
     ValueErrorMode Mode,
-    ValueDatum<V> Value,
-    ErrorDatum Error
+    ValueDatum<V> ValueDatum,
+    ErrorDatum ErrorDatum
 ) : IWithMeaning, ILogicalTimestamp {
     private string GetDebuggerDisplay() => this.ToString();
 
-    public Brimborium.TheMeaningOfLiff.Meaning? Meaning => this.Mode switch {
-        ValueErrorMode.Value => this.Value.Meaning,
-        ValueErrorMode.Error => this.Error.Meaning,
+    public Meaning? Meaning => this.Mode switch {
+        ValueErrorMode.Value => this.ValueDatum.Meaning,
+        ValueErrorMode.Error => this.ErrorDatum.Meaning,
         _ => default
     };
 
     public long LogicalTimestamp => this.Mode switch {
-        ValueErrorMode.Value => this.Value.LogicalTimestamp,
-        ValueErrorMode.Error => this.Error.LogicalTimestamp,
+        ValueErrorMode.Value => this.ValueDatum.LogicalTimestamp,
+        ValueErrorMode.Error => this.ErrorDatum.LogicalTimestamp,
         _ => default
     };
 
 }
+
+// generated 1 type

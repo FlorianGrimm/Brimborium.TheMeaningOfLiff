@@ -6,9 +6,9 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptional(out NoDatum optional){
+    public bool TryGetOptionalDatum(out NoDatum optional){
         if (this.Mode == OptionalValueErrorMode.NoValue) {
-            optional = this.Optional;
+            optional = this.OptionalDatum;
             return true;
         } else {
             optional = default;
@@ -16,9 +16,9 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out ValueErrorDatum<V> valueErrorDatum){
+    public bool TryGetOptionalDatum(out NoDatum optionalDatum, out ValueErrorDatum<V> valueErrorDatum){
         if (this.Mode == OptionalValueErrorMode.NoValue) {
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             valueErrorDatum = default;
             return true;
         } else {
@@ -29,16 +29,16 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                     OptionalValueErrorMode.Error => ValueErrorMode.Error,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Value,
-                this.Error
+                this.ValueDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> value){
+    public bool TryGetValueDatum(out ValueDatum<V> value){
         if (this.Mode == OptionalValueErrorMode.Value) {
-            value = this.Value;
+            value = this.ValueDatum;
             return true;
         } else {
             value = default;
@@ -46,9 +46,9 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> valueDatum, out OptionalErrorDatum optionalErrorDatum){
+    public bool TryGetValueDatum(out ValueDatum<V> valueDatum, out OptionalErrorDatum optionalErrorDatum){
         if (this.Mode == OptionalValueErrorMode.Value) {
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             optionalErrorDatum = default;
             return true;
         } else {
@@ -59,16 +59,16 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                     OptionalValueErrorMode.Error => OptionalErrorMode.Error,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Optional,
-                this.Error
+                this.OptionalDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetError(out ErrorDatum error){
+    public bool TryGetErrorDatum(out ErrorDatum error){
         if (this.Mode == OptionalValueErrorMode.Error) {
-            error = this.Error;
+            error = this.ErrorDatum;
             return true;
         } else {
             error = default;
@@ -76,9 +76,9 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetError(out ErrorDatum errorDatum, out OptionalValueDatum<V> optionalValueDatum){
+    public bool TryGetErrorDatum(out ErrorDatum errorDatum, out OptionalValueDatum<V> optionalValueDatum){
         if (this.Mode == OptionalValueErrorMode.Error) {
-            errorDatum = this.Error;
+            errorDatum = this.ErrorDatum;
             optionalValueDatum = default;
             return true;
         } else {
@@ -89,11 +89,12 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                     OptionalValueErrorMode.Value => OptionalValueMode.Value,
                     _ => throw new InvalidOperationException()
                 }),
-                this.Optional,
-                this.Value
+                this.OptionalDatum,
+                this.ValueDatum
                 );
             return false;
         }
     }
 
 }
+// generated 2 Downgrade

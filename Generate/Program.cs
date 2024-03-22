@@ -134,7 +134,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 fullNamePart.ArgName = part0.ArgName;
                 fullNamePart.Parameters.AddRange(part0.Parameters);
             } else {
-                var csvParts = string.Join("", fullNamePart.Parts.Select(i => i.PartName));
+                var csvParts = string.Join("", fullNamePart.Parts.Select(i => i.PartName.Replace("Datum","")));
                 foreach (var s in fullNamePart.Parts.Where(i => i.GenericTypeArgName != "").Select(i => i.GenericTypeArgName).Where(s => s.Length > 0)) {
                     if (fullNamePart.ListGenericArgument.Contains(s)) {
                         //
@@ -236,6 +236,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 sb.AppendLine();
 
                 sb.AppendLine("}");
+                sb.AppendLine("");
+                sb.AppendLine("// generated 1 type");
             }
         }
 
@@ -248,15 +250,12 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             sb.AppendLine("// generated 2 Downgrade");
             sb.AppendLine("");
             sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "{");
+            sb.AppendLine("    public NoDatum ToNoDatum()");
+            sb.AppendLine("        => new NoDatum(this.Meaning, this.LogicalTimestamp);");
+            sb.AppendLine("");
 
             if (fullNamePart.Parts.Length == 1) {
-                sb.AppendLine("    public NoDatum ToNoDatum()");
-                sb.AppendLine("        => new NoDatum(this.Meaning, this.LogicalTimestamp);");
-                sb.AppendLine("");
             } else {
-                sb.AppendLine("    public NoDatum ToNoDatum()");
-                sb.AppendLine("        => new NoDatum(this.Meaning, this.LogicalTimestamp);");
-                sb.AppendLine("");
 
                 foreach (var (extractType, downgradeType) in fullNamePart.ListDowngrade) {
                     sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "(out ", extractType.ClassName, " ", extractType.ArgName, "){");
@@ -299,6 +298,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 }
             }
             sb.AppendLine("}");
+            sb.AppendLine("// generated 2 Downgrade");
         }
 
         // generated 3 Upgrade
@@ -341,6 +341,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine($"            _ => throw new UninitializedException()");
                     sb.AppendLine($"        }};");
                     sb.AppendLine($"    }}");
+                    sb.AppendLine("");
+                    sb.AppendLine("// generated 3");
                     /*
                     sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "(out ", extractType.ClassName, " ", extractType.ArgName, "){");
                     sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeName, ".", extractType.Parts[0].EnumName, ") {");
@@ -434,6 +436,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 sb.AppendLine("    }");
             }
             sb.AppendLine("}");
+            sb.AppendLine("");
+            sb.AppendLine("    // generated 3 type cast");
         }
 
         // generated 4 Construction
@@ -519,6 +523,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             }
 
             sb.AppendLine("}");
+            sb.AppendLine("");
+            sb.AppendLine("// generated 4");
         }
 
         // generated 5
@@ -633,6 +639,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             }
             //
             sb.AppendLine("}");
+            sb.AppendLine("");
+            sb.AppendLine("// generated 5");
         }
 
         // write

@@ -12,3 +12,5 @@ public static partial class Datum {
         return new NoDatum(Meaning, LogicalTimestamp);
     }
 }
+
+// generated 4
