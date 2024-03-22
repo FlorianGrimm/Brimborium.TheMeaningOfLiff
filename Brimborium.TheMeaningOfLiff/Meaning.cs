@@ -1,7 +1,7 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
 public record class Meaning(
-    int MessageId,
+    EventId EventId,
     string Message
     );
 

@@ -56,8 +56,9 @@
         public static void LogFlowControl(this ILogger logger, IWithMeaning datum) {
             if (!logger.IsEnabled(LogLevel.Debug)) { return; }
             var meaning = datum.Meaning;
-            if (!string.IsNullOrEmpty(meaning)) {
-                logger.LogFlowControl(meaning!);
+            if (!string.IsNullOrEmpty(meaning?.Message)) {
+                logger.LogFlowControl(meaning.Message);
+                logger.LogDebug(meaning.EventId, meaning.Message);
             }
         }
 
