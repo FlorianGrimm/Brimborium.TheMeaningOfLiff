@@ -47,17 +47,19 @@
             }
         }
 
-        [LoggerMessage(
-            Level = LogLevel.Debug,
-            Message = "flowcondition {meaning}"
-            )]
-        public static partial void LogFlowControl(this ILogger logger, string meaning);
+        //[LoggerMessage(
+        //    Level = LogLevel.Debug,
+        //    Message = "flowcondition {meaning}"
+        //    )]
+        //public static partial void LogFlowControl(this ILogger logger, string meaning);
 
         public static void LogFlowControl(this ILogger logger, IWithMeaning datum) {
             if (!logger.IsEnabled(LogLevel.Debug)) { return; }
             var meaning = datum.Meaning;
-            if (!string.IsNullOrEmpty(meaning)) {
-                logger.LogFlowControl(meaning!);
+            if (!string.IsNullOrEmpty(meaning?.Message)) {
+                if (logger.IsEnabled(LogLevel.Debug)) {
+                    logger.LogDebug(meaning.EventId, meaning.Message);
+                }
             }
         }
 
