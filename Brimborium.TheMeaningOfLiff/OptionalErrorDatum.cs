@@ -13,7 +13,7 @@ public readonly partial record struct OptionalErrorDatum(
 ) : IWithMeaning, ILogicalTimestamp {
     private string GetDebuggerDisplay() => this.ToString();
 
-    public string? Meaning => this.Mode switch {
+    public Brimborium.TheMeaningOfLiff.Meaning? Meaning => this.Mode switch {
         OptionalErrorMode.NoValue => this.Optional.Meaning,
         OptionalErrorMode.Error => this.Error.Meaning,
         _ => default

@@ -8,7 +8,7 @@ public static partial class Datum {
     public static ErrorDatum AsErrorDatum(
         this System.Exception Exception,
         System.Runtime.ExceptionServices.ExceptionDispatchInfo? ExceptionDispatchInfo = default,
-        System.String? Meaning = default,
+        Brimborium.TheMeaningOfLiff.Meaning? Meaning = default,
         System.Int64 LogicalTimestamp = default,
         System.Boolean IsLogged = default
     ) {

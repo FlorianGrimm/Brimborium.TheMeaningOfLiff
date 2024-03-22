@@ -14,7 +14,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>(
 ) : IWithMeaning, ILogicalTimestamp {
     private string GetDebuggerDisplay() => this.ToString();
 
-    public string? Meaning => this.Mode switch {
+    public Brimborium.TheMeaningOfLiff.Meaning? Meaning => this.Mode switch {
         OptionalValueFailureMode.NoValue => this.Optional.Meaning,
         OptionalValueFailureMode.Value => this.Value.Meaning,
         OptionalValueFailureMode.Failure => this.Failure.Meaning,

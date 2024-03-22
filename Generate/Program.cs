@@ -219,7 +219,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 sb.AppendLine("    private string GetDebuggerDisplay() => this.ToString();");
                 sb.AppendLine();
 
-                sb.AppendLine($"    public string? Meaning => this.Mode switch {{");
+                sb.AppendLine($"    public Meaning? Meaning => this.Mode switch {{");
                 foreach (var part in fullNamePart.Parts) {
                     sb.AppendLine($"        {fullNamePart.ModeTypeName}.{part.ModeEnumValueName} => this.{part.PartName}.Meaning,");
                 }
@@ -580,12 +580,12 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         sb.Append("                ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => ");
                         if (partIndex.Item.iType == iTypeOptional) {
                             sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(defaultValue) : defaultValue,");
-                        } else if (partIndex.Item.iType == iTypeValue) {
-                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Value, defaultValue) : defaultValue,");
+                        } else if (partIndex.Item.iType == iTypeValue) {                            
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.", partIndex.Item.PartName, ", defaultValue) : defaultValue,");
                         } else if (partIndex.Item.iType == iTypeFailure) {
-                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Failure, defaultValue) : defaultValue,");
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.", partIndex.Item.PartName, ", defaultValue) : defaultValue,");
                         } else if (partIndex.Item.iType == iTypeError) {
-                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.Error, defaultValue) : this.Error,");
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.", partIndex.Item.PartName, ", defaultValue) : this.", partIndex.Item.PartName, ",");
                         }
                     }
                     sb.AppendLine("            _ => defaultValue");

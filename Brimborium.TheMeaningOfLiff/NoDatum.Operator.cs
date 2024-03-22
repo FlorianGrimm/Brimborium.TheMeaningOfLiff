@@ -6,16 +6,16 @@ public readonly partial record struct NoDatum {
     //
     // generated 5 with
     //
-    public NoDatum WithOptional(NoDatum value)
+    public NoDatum WithOptionalDatum(NoDatum value)
         => value;
 
-    public OptionalValueDatum<V> WithValue<V>(ValueDatum<V> value)
-        => new OptionalValueDatum<V>(OptionalValueMode.Value, default, value);
+    public OptionalDatumValueDatumDatum<V> WithValueDatum<V>(ValueDatum<V> value)
+        => new OptionalDatumValueDatumDatum<V>(OptionalDatumValueDatumMode.Value, default, value);
 
-    public OptionalFailureDatum<F> WithFailure<F>(FailureDatum<F> value)
-        => new OptionalFailureDatum<F>(OptionalFailureMode.Failure, default, value);
+    public OptionalDatumFailureDatumDatum<F> WithFailureDatum<F>(FailureDatum<F> value)
+        => new OptionalDatumFailureDatumDatum<F>(OptionalDatumFailureDatumMode.Failure, default, value);
 
-    public OptionalErrorDatum WithError(ErrorDatum value)
-        => new OptionalErrorDatum(OptionalErrorMode.Error, default, value);
+    public OptionalDatumErrorDatumDatum WithErrorDatum(ErrorDatum value)
+        => new OptionalDatumErrorDatumDatum(OptionalDatumErrorDatumMode.Error, default, value);
 
 }

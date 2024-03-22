@@ -7,7 +7,7 @@ public static partial class Datum {
 
     public static ValueDatum<V> AsValueDatum<V>(
         this V Value,
-        System.String? Meaning = default,
+        Brimborium.TheMeaningOfLiff.Meaning? Meaning = default,
         System.Int64 LogicalTimestamp = default
     ) {
         return new ValueDatum<V>(Value, Meaning, LogicalTimestamp);

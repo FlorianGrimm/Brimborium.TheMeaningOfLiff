@@ -5,7 +5,7 @@ public enum DatumMode { NoValue, Success, Error }
 [DebuggerNonUserCode]
 public readonly partial record struct LogDatum(
     DatumMode Mode,
-    string? Meaning
+    Brimborium.TheMeaningOfLiff.Meaning? Meaning
     )
     : IWithMeaning {
 

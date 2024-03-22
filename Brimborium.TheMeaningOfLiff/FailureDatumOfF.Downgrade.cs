@@ -6,3 +6,4 @@ public readonly partial record struct FailureDatum<F>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
+}

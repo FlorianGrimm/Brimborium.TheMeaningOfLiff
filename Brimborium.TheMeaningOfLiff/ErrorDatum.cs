@@ -21,7 +21,7 @@ public readonly partial record struct ErrorDatum(
 #endif
     public ErrorDatum(
         Exception Exception,
-        string? Meaning,
+        Meaning? Meaning,
         long LogicalTimestamp,
         bool IsLogged
         ) :this(Exception, default, Meaning, LogicalTimestamp, IsLogged){
@@ -66,7 +66,7 @@ public readonly partial record struct ErrorDatum(
     public readonly ErrorDatum WithIsLogged(bool isLogged = true)
         => new ErrorDatum(this.Exception, this.ExceptionDispatchInfo, this.Meaning, this.LogicalTimestamp, isLogged);
 
-    public readonly ErrorDatum With(string? meaning, long logicalTimestamp = 0, bool? isLogged = default)
+    public readonly ErrorDatum With(Meaning? meaning, long logicalTimestamp = 0, bool? isLogged = default)
         => new ErrorDatum(
             this.Exception,
             this.ExceptionDispatchInfo,
