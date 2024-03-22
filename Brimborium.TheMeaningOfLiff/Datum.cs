@@ -2,6 +2,7 @@
 
 [DebuggerNonUserCode]
 public static partial class Datum {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static NoDatum NoDatum(string? meaning = default, long logicalTimestamp = 0) => new NoDatum(meaning, logicalTimestamp);
 
     public static ValueDatum<T> AsValueDatum<T>(this T value, string? meaning = default, long logicalTimestamp = 0)

@@ -65,8 +65,8 @@ public readonly partial record struct OptionalValueDatum<V>(
         }
     }
 
-
-    public bool TryGetValue([MaybeNullWhen(false)] out V value) {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGetValue([MaybeNullWhen(false)] out T value) {
         if (this.Mode == OptionalValueDatumMode.NoValue) {
             value = default;
             return false;
@@ -76,7 +76,8 @@ public readonly partial record struct OptionalValueDatum<V>(
         }
     }
 
-    public bool TryGetValue([MaybeNullWhen(false)] out V value, [MaybeNullWhen(true)] out NoDatum noDatum) {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGetValue([MaybeNullWhen(false)] out T value, [MaybeNullWhen(true)] out NoDatum noDatum) {
         if (this.Mode == OptionalValueDatumMode.NoValue) {
             value = default;
             noDatum = this.NoValue;

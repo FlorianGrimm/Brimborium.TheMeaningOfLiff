@@ -1,6 +1,7 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
 public static partial class Datum {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static OptionalValueDatum<T> AsOptionalValueDatum<T>(
         this T value,
         string? meaning = default,

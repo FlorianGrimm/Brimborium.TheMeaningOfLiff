@@ -37,6 +37,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             if (((i >> 2) & 1) == 1) { list.Add("namePartFailure"); }
             if (((i >> 3) & 1) == 1) { list.Add("namePartError"); }
             var csvName = string.Join(", ", list);
+            // System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
             //System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
         }
         NamePart namePartOptional = new(iTypeOptional, typeof(Brimborium.TheMeaningOfLiff.NoDatum), "Optional", "optional", "NoValue", "NoDatum", "", "NoDatum");

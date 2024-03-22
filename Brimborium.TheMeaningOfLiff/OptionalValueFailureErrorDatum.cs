@@ -66,7 +66,7 @@ public readonly partial record struct OptionalFailureErrorDatum<F>(
     [property: AllowNull][AllowNull] ErrorDatum ErrorDatum
     ) {
 
-    //public bool TryGetNoDatum<V>(out NoDatum noDatum, out ValueFailureErrorDatum<V, F> elseDatum) {
+    //public bool TryGetNoDatum(out NoDatum noDatum, out ValueFailureErrorDatum<V, F> elseDatum) {
     //    throw new NotImplementedException();
     //}
     //public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out OptionalValueErrorDatum<V> elseDatum) {
