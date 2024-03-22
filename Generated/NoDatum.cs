@@ -7,7 +7,7 @@ namespace Brimborium.TheMeaningOfLiff;
 [method: JsonConstructor]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct NoDatum(
-    string? Meaning = default,
+    Meaning? Meaning = default,
     long LogicalTimestamp = 0) {
 
     public override string ToString() => string.Empty;
@@ -18,7 +18,7 @@ public readonly partial record struct NoDatum(
 
     //public OptionalValueDatum<T> ToOptionalDatum<T>() => new OptionalValueDatum<T>(OptionalValueDatumMode.NoValue, this, default);
 
-    public ValueDatum<T> WithValue<T>(T value, string? meaning = default, long logicalTimestamp = 0)
+    public ValueDatum<T> WithValue<T>(T value, Meaning? meaning = default, long logicalTimestamp = 0)
         => new ValueDatum<T>(
             value,
             meaning ?? this.Meaning,

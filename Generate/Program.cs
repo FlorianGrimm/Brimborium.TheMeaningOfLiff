@@ -40,10 +40,10 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             // System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
             //System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
         }
-        NamePart namePartOptional = new(iTypeOptional, typeof(Brimborium.TheMeaningOfLiff.NoDatum), "Optional", "optional", "NoValue", "NoDatum", "", "NoDatum");
-        NamePart namePartValue = new(iTypeValue, typeof(Brimborium.TheMeaningOfLiff.ValueDatum<>), "Value", "value", "Value", "ValueDatum<V>", "V", "ValueDatumOfV");
-        NamePart namePartFailure = new(iTypeFailure, typeof(Brimborium.TheMeaningOfLiff.FailureDatum<>), "Failure", "failure", "Failure", "FailureDatum<F>", "F", "FailureDatumOfF");
-        NamePart namePartError = new(iTypeError, typeof(Brimborium.TheMeaningOfLiff.ErrorDatum), "Error", "error", "Error", "ErrorDatum", "", "ErrorDatum");
+        NamePart namePartOptional = new(iTypeOptional, typeof(Brimborium.TheMeaningOfLiff.NoDatum), "OptionalDatum", "optional", "NoValue", "NoDatum", "", "NoDatum");
+        NamePart namePartValue = new(iTypeValue, typeof(Brimborium.TheMeaningOfLiff.ValueDatum<>), "ValueDatum", "value", "Value", "ValueDatum<V>", "V", "ValueDatumOfV");
+        NamePart namePartFailure = new(iTypeFailure, typeof(Brimborium.TheMeaningOfLiff.FailureDatum<>), "FailureDatum", "failure", "Failure", "FailureDatum<F>", "F", "FailureDatumOfF");
+        NamePart namePartError = new(iTypeError, typeof(Brimborium.TheMeaningOfLiff.ErrorDatum), "ErrorDatum", "error", "Error", "ErrorDatum", "", "ErrorDatum");
 
         List<NamePart> listAllParts = [
             namePartOptional,
@@ -53,7 +53,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         ];
 
 
-        //string? Meaning = default,    long LogicalTimestamp = 0)
+        //Meaning? Meaning = default,    long LogicalTimestamp = 0)
 
         NullabilityInfoContext nullabilityInfoContext = new();
 
@@ -297,8 +297,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("    }");
                     sb.AppendLine("");
                 }
-                sb.AppendLine("}");
             }
+            sb.AppendLine("}");
         }
 
         // generated 3 Upgrade
@@ -315,7 +315,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             } else {
                 foreach (var (extractType, upgradeType) in fullNamePart.ListUpgrade) {
                     // sb.AppendLine($"//    extractType:{extractType.ClassName} upgradeType:{upgradeType.ClassName}");
-                   
+
                     var listMissingGenericArgument = CalsListMissingGenericArgument(upgradeType.ListGenericArgument, fullNamePart.ListGenericArgument);
                     var missingGenericArgument = GenericArgumentToString(listMissingGenericArgument);
                     sb.AppendLine("");
@@ -612,13 +612,13 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         var listMissingGenericArgument = CalsListMissingGenericArgument(fullNamePartResult.ListGenericArgument, fullNamePart.ListGenericArgument);
                         var missingGenericArgument = GenericArgumentToString(listMissingGenericArgument);
 
-                        sb.AppendLine("    public ", fullNamePartResult.ClassName, " With", part.PartName, missingGenericArgument,"(",part.ClassName, " value)");
+                        sb.AppendLine("    public ", fullNamePartResult.ClassName, " With", part.PartName, missingGenericArgument, "(", part.ClassName, " value)");
                         if (fullNamePartResult.Parts.Length == 1) {
                             sb.AppendLine("        => value;");
                         } else {
                             sb.Append("        => new ", fullNamePartResult.ClassName, "(");
                             sb.Append(fullNamePartResult.ModeTypeName, ".", part.ModeEnumValueName);
-                            foreach (var resultPart in fullNamePartResult.Parts) { 
+                            foreach (var resultPart in fullNamePartResult.Parts) {
                                 if (resultPart.ModeEnumValueName == part.ModeEnumValueName) {
                                     sb.Append(", value");
                                 } else {

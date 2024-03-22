@@ -36,7 +36,7 @@ public static partial class Datum {
     public static OptionalValueDatum<TValue> TryGetOptionalDatum<TKey, TValue>(
         this Dictionary<TKey, TValue> that,
         TKey key,
-        string? meaning = default,
+        Meaning? meaning = default,
         long logicalTimestamp = 0)
         where TKey : notnull {
         if (that.TryGetValue(key, out var value)) {

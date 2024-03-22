@@ -1,7 +1,7 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
 public interface IWithMeaning {
-    string? Meaning { get; }
+    Meaning? Meaning { get; }
 }
 
 // TODO: WEICHEI

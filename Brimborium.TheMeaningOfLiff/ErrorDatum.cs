@@ -9,7 +9,7 @@
 public readonly partial record struct ErrorDatum(
     [property: Orleans.Id(0)] Exception Exception,
     ExceptionDispatchInfo? ExceptionDispatchInfo = default,
-    [property: Orleans.Id(1)] string? Meaning = default,
+    [property: Orleans.Id(1)] Meaning? Meaning = default,
     [property: Orleans.Id(2)] long LogicalTimestamp = 0,
     [property: Orleans.Id(3)] bool IsLogged = false
     )
@@ -76,7 +76,7 @@ public readonly partial record struct ErrorDatum(
 
     public static ErrorDatum Uninitialized => UninitializedExceptionInstance.GetUninitialized();
 
-    public static ErrorDatum CreateFromCatchedException(Exception exception, string? meaning = default, long logicalTimestamp = 0) {
+    public static ErrorDatum CreateFromCatchedException(Exception exception, Meaning? meaning = default, long logicalTimestamp = 0) {
         var exceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception);
         return new ErrorDatum(exception, exceptionDispatchInfo, meaning, logicalTimestamp, false);
     }

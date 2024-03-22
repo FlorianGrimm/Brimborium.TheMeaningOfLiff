@@ -5,14 +5,14 @@ public static partial class Datum {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static OptionalValueDatum<T> AsOptionalValueDatum<T>(
         this T value,
-        string? meaning = default,
+        Meaning? meaning = default,
         long logicalTimestamp = 0) {
         return new OptionalValueDatum<T>(OptionalValueMode.Value, default, new ValueDatum<T>(value, meaning, logicalTimestamp));
     }
 
     public static OptionalValueDatum<R> AsOptionalOfType<T, R>(
         this T that,
-        string? meaning = default,
+        Meaning? meaning = default,
         long logicalTimestamp = 0) {
         if (that is R valueR) {
             return new OptionalValueDatum<R>(OptionalValueMode.Value, default, new ValueDatum<R>(valueR, meaning, logicalTimestamp));
@@ -37,7 +37,7 @@ public static partial class Datum {
     public static OptionalValueDatum<T> WithValueNotNull<T>(
         this OptionalValueDatum<T> that,
         T? value,
-        string? meaning = default,
+        Meaning? meaning = default,
         long logicalTimestamp = 0)
         where T : class {
         if (value is null) {

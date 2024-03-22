@@ -8,7 +8,7 @@
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct ValueDatum<V>(
     V Value,
-    string? Meaning = default,
+    Meaning? Meaning = default,
     long LogicalTimestamp = 0)
     : IDatum<V>
     , ISuccessDatum<V>
@@ -19,10 +19,10 @@ public readonly partial record struct ValueDatum<V>(
         return $"{this.Value};{this.Meaning};{this.LogicalTimestamp}";
     }
 
-    //public readonly ValueDatum<T> WithValue(T value, string? meaning = default, long logicalTimestamp = 0)
+    //public readonly ValueDatum<T> WithValue(T value, Meaning? meaning = default, long logicalTimestamp = 0)
     //    => new ValueDatum<T>(value, meaning, logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp);
 
-    //public readonly ValueErrorDatum<T> WithError(Exception that, string? meaning = default, long logicalTimestamp = 0)
+    //public readonly ValueErrorDatum<T> WithError(Exception that, Meaning? meaning = default, long logicalTimestamp = 0)
     //    => new ValueErrorDatum<T>(new ErrorDatum(that, default, meaning, logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp));
 
     //public readonly bool TryGetValue([MaybeNullWhen(false)] out T value) {

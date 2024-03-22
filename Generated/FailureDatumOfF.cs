@@ -8,7 +8,7 @@
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct FailureDatum<F>(
     [property: Orleans.Id(0)] F Value,
-    [property: Orleans.Id(1)] string? Meaning = default,
+    [property: Orleans.Id(1)] Meaning? Meaning = default,
     [property: Orleans.Id(2)] long LogicalTimestamp = 0
     )
     : IDatum<F>
