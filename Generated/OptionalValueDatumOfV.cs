@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 1 type
+
 public enum OptionalValueMode { NoValue, Value }
 
 [DebuggerNonUserCode]
@@ -8,18 +10,19 @@ public readonly partial record struct OptionalValueDatum<V>(
     OptionalValueMode Mode,
     NoDatum Optional,
     ValueDatum<V> Value
-){
+) : IWithMeaning, ILogicalTimestamp {
     private string GetDebuggerDisplay() => this.ToString();
 
-    public string? Meaning => (this.Mode) switch {
+    public string? Meaning => this.Mode switch {
         OptionalValueMode.NoValue => this.Optional.Meaning,
         OptionalValueMode.Value => this.Value.Meaning,
         _ => default
     };
 
-    public long LogicalTimestamp => (this.Mode) switch {
+    public long LogicalTimestamp => this.Mode switch {
         OptionalValueMode.NoValue => this.Optional.LogicalTimestamp,
         OptionalValueMode.Value => this.Value.LogicalTimestamp,
-        _ => 0
+        _ => default
     };
+
 }

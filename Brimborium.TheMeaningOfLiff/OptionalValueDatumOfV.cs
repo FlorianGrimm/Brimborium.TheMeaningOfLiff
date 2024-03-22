@@ -4,12 +4,12 @@ public enum OptionalValueDatumMode { NoValue, Success }
 
 [DebuggerNonUserCode]
 [method: JsonConstructor]
-public readonly partial record struct OptionalValueDatum<T>(
+public readonly partial record struct OptionalValueDatum<V>(
         OptionalValueDatumMode Mode,
         [property: AllowNull][AllowNull] NoDatum NoValue,
-        [property: AllowNull][AllowNull] ValueDatum<T> ValueDatum
+        [property: AllowNull][AllowNull] ValueDatum<V> ValueDatum
     )
-    : IOptionalDatum<T>
+    : IOptionalDatum<V>
     , IWithMeaning {
 
     public OptionalValueDatum(
@@ -22,10 +22,10 @@ public readonly partial record struct OptionalValueDatum<T>(
     }
 
     public OptionalValueDatum(
-        T value,
+        V value,
         string? meaning = default,
         long logicalTimestamp = 0
-        ) : this(OptionalValueDatumMode.Success, default, new ValueDatum<T>(value, meaning, logicalTimestamp)) {
+        ) : this(OptionalValueDatumMode.Success, default, new ValueDatum<V>(value, meaning, logicalTimestamp)) {
     }
 
 
@@ -55,7 +55,7 @@ public readonly partial record struct OptionalValueDatum<T>(
         }
     }
 
-    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<T> value) {
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value) {
         if (this.Mode == OptionalValueDatumMode.NoValue) {
             value = default;
             return false;
@@ -89,19 +89,19 @@ public readonly partial record struct OptionalValueDatum<T>(
         }
     }
 
-    public T GetValueOrDefaultValue(T defaultValue)
+    public V GetValueOrDefaultValue(V defaultValue)
         => this.Mode switch {
             OptionalValueDatumMode.Success => this.ValueDatum.Value,
             _ => defaultValue
         };
 
-    public OptionalValueDatum<T> OrDefaultDatum(
-        T defaultValue, 
+    public OptionalValueDatum<V> OrDefaultDatum(
+        V defaultValue, 
         string? meaning = default,
         long logicalTimestamp = 0)
       => this.Mode switch {
           OptionalValueDatumMode.Success => this,
-          _ => new OptionalValueDatum<T>(defaultValue, meaning, logicalTimestamp),
+          _ => new OptionalValueDatum<V>(defaultValue, meaning, logicalTimestamp),
       };
 
     public OptionalValueDatum<R> AsOptionalOfType<R>(

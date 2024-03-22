@@ -8,8 +8,8 @@ public enum ValueErrorDatumMode {
 
 [DebuggerNonUserCode]
 public static class ValueErrorDatum {
-    public static ValueErrorDatum<T> Create<T>(T value, string? meaning = default, long logicalTimestamp = 0)
-        => new ValueErrorDatum<T>(ValueErrorDatumMode.Success, new ValueDatum<T>(value, meaning, logicalTimestamp), default);
+    public static ValueErrorDatum<V> Create<V>(V value, string? meaning = default, long logicalTimestamp = 0)
+        => new ValueErrorDatum<V>(ValueErrorDatumMode.Success, new ValueDatum<V>(value, meaning, logicalTimestamp), default);
 
     //public static ValueErrorDatum<T> CreateNotNull<T>([AllowNull] T value, string? meaning = default, long logicalTimestamp = 0)
     //    where T : class {

@@ -7,4 +7,19 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Generated\CustomExceptions.cs" Link="Generated\CustomExceptions.cs" />
+    <Compile Include="..\Generated\ErrorDatum.cs" Link="Generated\ErrorDatum.cs" />
+    <Compile Include="..\Generated\FailureDatumOfF.cs" Link="Generated\FailureDatumOfF.cs" />
+    <Compile Include="..\Generated\IMeaning.cs" Link="Generated\IMeaning.cs" />
+    <Compile Include="..\Generated\IValue.cs" Link="Generated\IValue.cs" />
+    <Compile Include="..\Generated\NoDatum.cs" Link="Generated\NoDatum.cs" />
+    <Compile Include="..\Generated\UninitializedExceptionInstance.cs" Link="Generated\UninitializedExceptionInstance.cs" />
+    <Compile Include="..\Generated\ValueDatumOfV.cs" Link="Generated\ValueDatumOfV.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" />
+  </ItemGroup>
+
 </Project>

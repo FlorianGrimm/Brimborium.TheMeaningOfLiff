@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 2 Downgrade
+
 public readonly partial record struct ValueFailureDatum<V, F>{
     public bool TryGetValue(out ValueDatum<V> value){
         if (this.Mode == ValueFailureMode.Value) {

@@ -1,14 +1,14 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
 public static partial class Datum {
-    public static OptionalValueDatum<T> NotNull<T>(
-        ValueDatum<T?> that,
+    public static OptionalValueDatum<V> NotNull<V>(
+        ValueDatum<V?> that,
         NoDatum elseDatum = default
         )
-        where T : class {
+        where V : class {
         return that.Value switch {
             null => elseDatum,
-            _ => new OptionalValueDatum<T>(that.Value, that.Meaning, that.LogicalTimestamp)
+            _ => new OptionalValueDatum<V>(that.Value, that.Meaning, that.LogicalTimestamp)
         };
     }
 }

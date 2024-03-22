@@ -1,5 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+// generated 2 Downgrade
+
 public readonly partial record struct OptionalValueFailureErrorDatum<V, F>{
     public bool TryGetOptional(out NoDatum optional){
         if (this.Mode == OptionalValueFailureErrorMode.NoValue) {
