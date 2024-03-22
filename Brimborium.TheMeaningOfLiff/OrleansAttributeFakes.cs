@@ -1,4 +1,4 @@
-﻿#if !Orleans
+﻿#if Orleans
 namespace Orleans {
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]

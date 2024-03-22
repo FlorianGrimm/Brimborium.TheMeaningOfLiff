@@ -3,6 +3,9 @@ namespace Brimborium.TheMeaningOfLiff;
 // generated 2 Downgrade
 
 public readonly partial record struct OptionalErrorDatum{
+    public NoDatum ToNoDatum()
+        => new NoDatum(this.Meaning, this.LogicalTimestamp);
+
     public bool TryGetOptional(out NoDatum optional){
         if (this.Mode == OptionalErrorMode.NoValue) {
             optional = this.Optional;

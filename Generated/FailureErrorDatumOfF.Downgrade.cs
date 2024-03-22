@@ -3,6 +3,9 @@ namespace Brimborium.TheMeaningOfLiff;
 // generated 2 Downgrade
 
 public readonly partial record struct FailureErrorDatum<F>{
+    public NoDatum ToNoDatum()
+        => new NoDatum(this.Meaning, this.LogicalTimestamp);
+
     public bool TryGetFailure(out FailureDatum<F> failure){
         if (this.Mode == FailureErrorMode.Failure) {
             failure = this.Failure;

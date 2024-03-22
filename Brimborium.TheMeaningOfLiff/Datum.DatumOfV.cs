@@ -6,7 +6,9 @@ public static partial class Datum {
         NoDatum elseDatum = default
         )
         where V : class {
-#warning HERE
+
+        that.ToNoDatum().WithValue(that.Value);
+        that.WithValue
         return that.Value switch {
             null => elseDatum,
             var value => new OptionalValueDatum<V>(OptionalValueMode.Value, default, new ValueDatum<V>(value, that.Meaning, that.LogicalTimestamp))

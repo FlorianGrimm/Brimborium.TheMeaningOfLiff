@@ -242,19 +242,23 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
         // generated 2 Downgrade
 
         foreach (var fullNamePart in listFullNamePart) {
+            StringBuilder sb = getFile($"{fullNamePart.FileName}.Downgrade.cs");
+            sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
+            sb.AppendLine("");
+            sb.AppendLine("// generated 2 Downgrade");
+            sb.AppendLine("");
+            sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "{");
+
             if (fullNamePart.Parts.Length == 1) {
+                sb.AppendLine("    public NoDatum ToNoDatum()");
+                sb.AppendLine("        => new NoDatum(this.Meaning, this.LogicalTimestamp);");
+                sb.AppendLine("");
             } else {
-                StringBuilder sb = getFile($"{fullNamePart.FileName}.Downgrade.cs");
+                sb.AppendLine("    public NoDatum ToNoDatum()");
+                sb.AppendLine("        => new NoDatum(this.Meaning, this.LogicalTimestamp);");
+                sb.AppendLine("");
 
-                //System.Console.WriteLine(fullNamePart.FileName);
-                //System.Console.WriteLine(fullNamePart.ClassName);
-                sb.AppendLine("namespace Brimborium.TheMeaningOfLiff;");
-                sb.AppendLine("");
-                sb.AppendLine("// generated 2 Downgrade");
-                sb.AppendLine("");
-                sb.AppendLine("public readonly partial record struct ", fullNamePart.ClassName, "{");
                 foreach (var (extractType, downgradeType) in fullNamePart.ListDowngrade) {
-
                     sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "(out ", extractType.ClassName, " ", extractType.ArgName, "){");
                     sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeTypeName, ".", extractType.Parts[0].ModeEnumValueName, ") {");
                     sb.AppendLine("            ", extractType.ArgName, " = this.", extractType.Parts[0].PartName, ";");

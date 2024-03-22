@@ -3,6 +3,9 @@ namespace Brimborium.TheMeaningOfLiff;
 // generated 2 Downgrade
 
 public readonly partial record struct ValueErrorDatum<V>{
+    public NoDatum ToNoDatum()
+        => new NoDatum(this.Meaning, this.LogicalTimestamp);
+
     public bool TryGetValue(out ValueDatum<V> value){
         if (this.Mode == ValueErrorMode.Value) {
             value = this.Value;
