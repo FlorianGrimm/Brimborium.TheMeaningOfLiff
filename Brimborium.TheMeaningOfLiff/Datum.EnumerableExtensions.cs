@@ -1,7 +1,7 @@
 namespace Brimborium.TheMeaningOfLiff;
 
 public static partial class Datum {
-    public static IEnumerable<R> SelectWhere<T, R>(this IEnumerable<T> source, Func<T, OptionalValueDatum<R>> predicateTransform) {
+    public static IEnumerable<ValueDatum<R>> SelectWhere<T, R>(this IEnumerable<T> source, Func<T, OptionalValueDatum<R>> predicateTransform) {
         foreach (var item in source) {
             var optR = predicateTransform(item);
             if (optR.TryGetValue(out var r)) {
@@ -11,7 +11,7 @@ public static partial class Datum {
     }
 
 
-    public static IEnumerable<R> SelectWhere<T, A, R>(this IEnumerable<T> source, A args, Func<T, A, OptionalValueDatum<R>> predicateTransform) {
+    public static IEnumerable<ValueDatum<R>> SelectWhere<T, A, R>(this IEnumerable<T> source, A args, Func<T, A, OptionalValueDatum<R>> predicateTransform) {
         foreach (var item in source) {
             var optR = predicateTransform(item, args);
             if (optR.TryGetValue(out var r)) {
@@ -20,12 +20,14 @@ public static partial class Datum {
         }
     }
 
-    public static IEnumerable<R> SelectWhereMany<T, R>(this IEnumerable<T> source, Func<T, OptionalValueDatum<IEnumerable<R>>> predicateTransform) {
+    public static IEnumerable<ValueDatum<R>> SelectWhereMany<T, R>(this IEnumerable<T> source, Func<T, OptionalValueDatum<IEnumerable<R>>> predicateTransform) {
         foreach (var item in source) {
             var optR = predicateTransform(item);
             if (optR.TryGetValue(out var r)) {
-                foreach (var itemInner in r) {
-                    yield return itemInner;
+                foreach (var valueInner in r.Value) {
+                    if (valueInner is not null) { 
+                        yield return new ValueDatum<R>(valueInner, r.Meaning, r.LogicalTimestamp);
+                    }
                 }
             }
         }

@@ -6,9 +6,10 @@ public static partial class Datum {
         NoDatum elseDatum = default
         )
         where V : class {
+#warning HERE
         return that.Value switch {
             null => elseDatum,
-            _ => new OptionalValueDatum<V>(that.Value, that.Meaning, that.LogicalTimestamp)
+            var value => new OptionalValueDatum<V>(OptionalValueMode.Value, default, new ValueDatum<V>(value, that.Meaning, that.LogicalTimestamp))
         };
     }
 }

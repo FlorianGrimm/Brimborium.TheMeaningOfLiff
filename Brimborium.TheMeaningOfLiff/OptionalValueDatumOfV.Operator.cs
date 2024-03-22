@@ -1,32 +1,56 @@
-﻿namespace Brimborium.TheMeaningOfLiff;
-public readonly partial record struct OptionalValueDatum<V>{
-#pragma warning disable IDE0060 // Remove unused parameter
-    public static implicit operator OptionalValueDatum<V>(NoDatum value) => new OptionalValueDatum<V>();
-#pragma warning restore IDE0060 // Remove unused parameter
+namespace Brimborium.TheMeaningOfLiff;
 
-    public static explicit operator OptionalValueDatum<V>(V value)
-        => new OptionalValueDatum<V>(OptionalValueDatumMode.Success, default, new ValueDatum<V>(value, default, 0));
+// generated 5
 
-    public static implicit operator OptionalValueDatum<V>(ValueDatum<V> value) 
-        => new OptionalValueDatum<V>(OptionalValueDatumMode.Success, default, value);
+public readonly partial record struct OptionalValueDatum<V> {
 
-    //public static implicit operator Optional<T>((T Value, Meaning Meaning) args) => new Optional<T>(OptionalMode.Success, args.Value, args.Meaning, 0);
+    // generated 5 Operator
 
-    //public static implicit operator bool(OptionalValueDatum<T> that) 
-    //    => that.Mode == OptionalValueDatumMode.Success;
-    public static bool operator true(OptionalValueDatum<V> that)
-        => that.Mode == OptionalValueDatumMode.Success;
-    public static bool operator false(OptionalValueDatum<V> that)
-        => that.Mode != OptionalValueDatumMode.Success;
+    public static explicit operator NoDatum(OptionalValueDatum<V> value) {
+        return (value.Mode switch {
+            OptionalValueMode.NoValue => value.Optional,
+            _ => throw new InvalidCastException()
+        });
+    }
 
-    public static explicit operator V(OptionalValueDatum<V> that)
-        => (that.Mode == OptionalValueDatumMode.Success) 
-        ? that.ValueDatum.Value
-        : throw new InvalidCastException();
+    // generated 5 Operator
 
-    public static implicit operator LogDatum(OptionalValueDatum<V> datum)
-        => datum.Mode switch {
-            OptionalValueDatumMode.Success => new LogDatum(DatumMode.Success, datum.ValueDatum.Meaning),
-            _ => new LogDatum(DatumMode.NoValue, datum.NoValue.Meaning),
-        };
+    public static explicit operator ValueDatum<V>(OptionalValueDatum<V> value) {
+        return (value.Mode switch {
+            OptionalValueMode.Value => value.Value,
+            _ => throw new InvalidCastException()
+        });
+    }
+
+    // generated 5 Then
+
+    public OptionalValueDatum<OV> Then<OV>(
+        OptionalValueDatum<OV> defaultValue,
+        Func<OptionalValueDatum<OV>, OptionalValueDatum<OV>>? funcOptional = default,
+        Func<ValueDatum<V>, OptionalValueDatum<OV>, OptionalValueDatum<OV>>? funcValue = default
+        ) {
+        {
+            return (this.Mode) switch {
+                OptionalValueMode.NoValue => (funcOptional is not null) ? funcOptional(defaultValue) : defaultValue,
+                OptionalValueMode.Value => (funcValue is not null) ? funcValue(this.Value, defaultValue) : defaultValue,
+            _ => defaultValue
+            };
+        }
+    }
+
+    //
+    // generated 5 with
+    //
+    public OptionalValueDatum<V> WithOptional(NoDatum value)
+        => new OptionalValueDatum<V>(OptionalValueMode.NoValue, value, default);
+
+    public OptionalValueDatum<V> WithValue(ValueDatum<V> value)
+        => new OptionalValueDatum<V>(OptionalValueMode.Value, default, value);
+
+    public OptionalValueFailureDatum<V, F> WithFailure<F>(FailureDatum<F> value)
+        => new OptionalValueFailureDatum<V, F>(OptionalValueFailureMode.Failure, default, default, value);
+
+    public OptionalValueErrorDatum<V> WithError(ErrorDatum value)
+        => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.Error, default, default, value);
+
 }

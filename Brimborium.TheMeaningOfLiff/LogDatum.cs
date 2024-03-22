@@ -17,8 +17,8 @@ public readonly partial record struct LogDatum(
 
     public static implicit operator LogDatum(OptionalErrorDatum datum)
         => datum.Mode switch {
-            OptionalErrorDatumMode.Error => new LogDatum(DatumMode.Error, datum.ErrorDatum.Meaning),
-            _ => new LogDatum(DatumMode.NoValue, datum.NoValue.Meaning),
+            OptionalErrorMode.Error => new LogDatum(DatumMode.Error, datum.Error.Meaning),
+            _ => new LogDatum(DatumMode.NoValue, datum.Optional.Meaning),
         };
 
 }

@@ -1,5 +1,5 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
-
+#if WEICHEI
 public enum OptionalValueFailureErrorDatumMode { NoValue, Success, Error, Failure }
 
 [DebuggerNonUserCode]
@@ -97,3 +97,4 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>(
         throw new UninitializedException();
     }
 }
+#endif

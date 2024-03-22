@@ -1,13 +1,17 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
+[Orleans.Alias(nameof(ErrorDatum))]
+[Orleans.Immutable]
+[Orleans.GenerateSerializer(IncludePrimaryConstructorParameters = false)]
 [DebuggerNonUserCode]
+//[method: JsonConstructor] not this ctor
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct ErrorDatum(
     [property: Orleans.Id(0)] Exception Exception,
     ExceptionDispatchInfo? ExceptionDispatchInfo = default,
     [property: Orleans.Id(1)] string? Meaning = default,
     [property: Orleans.Id(2)] long LogicalTimestamp = 0,
-    [property: Orleans.Id(4)] bool IsLogged = false
+    [property: Orleans.Id(3)] bool IsLogged = false
     )
     : IWithMeaning
     , ILogicalTimestamp {
@@ -53,9 +57,10 @@ public readonly partial record struct ErrorDatum(
 
     private string GetDebuggerDisplay() {
         if (this.Exception is not null) {
-            return $"{this.Exception.GetType().Name} {this.Exception.Message}";
+            return $"{this.Exception.GetType().Name};{this.Exception.Message};{this.Meaning};{this.LogicalTimestamp}";
+        } else {
+            return $";;{this.Meaning};{this.LogicalTimestamp}";
         }
-        return this.ToString();
     }
 
     public readonly ErrorDatum WithIsLogged(bool isLogged = true)

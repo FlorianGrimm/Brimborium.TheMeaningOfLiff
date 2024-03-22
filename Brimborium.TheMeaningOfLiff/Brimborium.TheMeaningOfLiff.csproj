@@ -10,7 +10,7 @@
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(TargetFramework)'=='net8.0'">
-      <DefineConstants>$(DefineConstants);Orleans</DefineConstants>
+      <DefineConstants>$(DefineConstants);NoOrleans</DefineConstants>
     </PropertyGroup>
 
     <Choose>

@@ -1,120 +1,28 @@
 namespace Brimborium.TheMeaningOfLiff;
 
-public enum OptionalValueDatumMode { NoValue, Success }
+// generated 1 type
+
+public enum OptionalValueMode { NoValue, Value }
 
 [DebuggerNonUserCode]
-[method: JsonConstructor]
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct OptionalValueDatum<V>(
-        OptionalValueDatumMode Mode,
-        [property: AllowNull][AllowNull] NoDatum NoValue,
-        [property: AllowNull][AllowNull] ValueDatum<V> ValueDatum
-    )
-    : IOptionalDatum<V>
-    , IWithMeaning {
+    OptionalValueMode Mode,
+    NoDatum Optional,
+    ValueDatum<V> Value
+) : IWithMeaning, ILogicalTimestamp {
+    private string GetDebuggerDisplay() => this.ToString();
 
-    public OptionalValueDatum(
-        ) : this(OptionalValueDatumMode.NoValue, new NoDatum(), default) {
-    }
-    public OptionalValueDatum(
-        string? Meaning,
-        long LogicalTimestamp
-        ) : this(OptionalValueDatumMode.NoValue, new NoDatum(Meaning, LogicalTimestamp), default) {
-    }
-
-    public OptionalValueDatum(
-        V value,
-        string? meaning = default,
-        long logicalTimestamp = 0
-        ) : this(OptionalValueDatumMode.Success, default, new ValueDatum<V>(value, meaning, logicalTimestamp)) {
-    }
-
-
-    public string? Meaning => (this.Mode) switch {
-        OptionalValueDatumMode.NoValue => this.NoValue.Meaning,
-        OptionalValueDatumMode.Success => this.ValueDatum.Meaning,
+    public string? Meaning => this.Mode switch {
+        OptionalValueMode.NoValue => this.Optional.Meaning,
+        OptionalValueMode.Value => this.Value.Meaning,
         _ => default
     };
 
-    public long LogicalTimestamp => (this.Mode) switch {
-        OptionalValueDatumMode.NoValue => this.ValueDatum.LogicalTimestamp,
-        OptionalValueDatumMode.Success => this.ValueDatum.LogicalTimestamp,
-        _ => 0
+    public long LogicalTimestamp => this.Mode switch {
+        OptionalValueMode.NoValue => this.Optional.LogicalTimestamp,
+        OptionalValueMode.Value => this.Value.LogicalTimestamp,
+        _ => default
     };
 
-    public bool TryGetNoDatum() {
-        return (this.Mode == OptionalValueDatumMode.NoValue);
-    }
-
-    public bool TryGetNoDatum([MaybeNullWhen(false)] out NoDatum noDatum) {
-        if (this.Mode == OptionalValueDatumMode.NoValue) {
-            noDatum = this.NoValue!;
-            return true;
-        } else {
-            noDatum = this.NoValue;
-            return false;
-        }
-    }
-
-    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value) {
-        if (this.Mode == OptionalValueDatumMode.NoValue) {
-            value = default;
-            return false;
-        } else {
-            value = this.ValueDatum;
-            return true;
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetValue([MaybeNullWhen(false)] out T value) {
-        if (this.Mode == OptionalValueDatumMode.NoValue) {
-            value = default;
-            return false;
-        } else {
-            value = this.ValueDatum.Value;
-            return true;
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetValue([MaybeNullWhen(false)] out T value, [MaybeNullWhen(true)] out NoDatum noDatum) {
-        if (this.Mode == OptionalValueDatumMode.NoValue) {
-            value = default;
-            noDatum = this.NoValue;
-            return false;
-        } else {
-            value = this.ValueDatum.Value;
-            noDatum = default;
-            return true;
-        }
-    }
-
-    public V GetValueOrDefaultValue(V defaultValue)
-        => this.Mode switch {
-            OptionalValueDatumMode.Success => this.ValueDatum.Value,
-            _ => defaultValue
-        };
-
-    public OptionalValueDatum<V> OrDefaultDatum(
-        V defaultValue, 
-        string? meaning = default,
-        long logicalTimestamp = 0)
-      => this.Mode switch {
-          OptionalValueDatumMode.Success => this,
-          _ => new OptionalValueDatum<V>(defaultValue, meaning, logicalTimestamp),
-      };
-
-    public OptionalValueDatum<R> AsOptionalOfType<R>(
-        string? meaning = default,
-        long logicalTimestamp = 0) {
-        if (this.TryGetValue(out var value, out var noValue)) {
-            if (value is R valueR) {
-                return new OptionalValueDatum<R>(OptionalValueDatumMode.Success, default, new ValueDatum<R>(valueR, meaning, logicalTimestamp));
-            } else {
-                return new NoDatum(meaning, logicalTimestamp);
-            }
-        } else {
-            return noValue;
-        }
-    }
 }

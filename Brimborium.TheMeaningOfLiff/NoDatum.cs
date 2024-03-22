@@ -1,13 +1,22 @@
 namespace Brimborium.TheMeaningOfLiff;
 
+[Orleans.Alias(nameof(NoDatum))]
+[Orleans.Immutable]
+[Orleans.GenerateSerializer(IncludePrimaryConstructorParameters = false)]
 [DebuggerNonUserCode]
+[method: JsonConstructor]
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct NoDatum(
     string? Meaning = default,
     long LogicalTimestamp = 0) {
 
     public override string ToString() => string.Empty;
 
-    public OptionalValueDatum<T> ToOptionalDatum<T>() => new OptionalValueDatum<T>(OptionalValueDatumMode.NoValue, this, default);
+    private string GetDebuggerDisplay() {
+        return $";{this.Meaning};{this.LogicalTimestamp}";
+    }
+
+    //public OptionalValueDatum<T> ToOptionalDatum<T>() => new OptionalValueDatum<T>(OptionalValueDatumMode.NoValue, this, default);
 
     public ValueDatum<T> WithValue<T>(T value, string? meaning = default, long logicalTimestamp = 0)
         => new ValueDatum<T>(

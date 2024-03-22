@@ -4,6 +4,8 @@
 /// Extensions for <see cref="OptionalValueErrorDatum{T}"/>
 /// </summary>
 public static partial class Datum {
+#warning HERE
+#if TODO
     /// <summary>
     /// 
     /// </summary>
@@ -366,4 +368,5 @@ public static partial class Datum {
             return false;
         }
     }
+#endif
 }
