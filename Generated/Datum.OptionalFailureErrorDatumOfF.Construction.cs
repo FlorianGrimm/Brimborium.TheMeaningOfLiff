@@ -9,10 +9,10 @@ public static partial class Datum {
         this NoDatum optional
     ) {
         return new OptionalFailureErrorDatum<F>(
-           OptionalFailureErrorMode.NoValue,
-           optional,
-           default,
-           default
+            OptionalFailureErrorMode.NoValue,
+            optional,
+            default,
+            default
         );
     }
 
@@ -21,10 +21,10 @@ public static partial class Datum {
         this FailureDatum<F> failure
     ) {
         return new OptionalFailureErrorDatum<F>(
-           OptionalFailureErrorMode.Failure,
-           default,
-           failure,
-           default
+            OptionalFailureErrorMode.Failure,
+            default,
+            failure,
+            default
         );
     }
 
@@ -33,10 +33,10 @@ public static partial class Datum {
         this ErrorDatum error
     ) {
         return new OptionalFailureErrorDatum<F>(
-           OptionalFailureErrorMode.Error,
-           default,
-           default,
-           error
+            OptionalFailureErrorMode.Error,
+            default,
+            default,
+            error
         );
     }
 }

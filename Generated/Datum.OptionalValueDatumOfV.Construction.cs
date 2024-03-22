@@ -9,9 +9,9 @@ public static partial class Datum {
         this NoDatum optional
     ) {
         return new OptionalValueDatum<V>(
-           OptionalValueMode.NoValue,
-           optional,
-           default
+            OptionalValueMode.NoValue,
+            optional,
+            default
         );
     }
 
@@ -20,9 +20,9 @@ public static partial class Datum {
         this ValueDatum<V> value
     ) {
         return new OptionalValueDatum<V>(
-           OptionalValueMode.Value,
-           default,
-           value
+            OptionalValueMode.Value,
+            default,
+            value
         );
     }
 }

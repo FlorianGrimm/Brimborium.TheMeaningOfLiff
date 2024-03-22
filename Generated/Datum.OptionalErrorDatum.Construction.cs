@@ -9,9 +9,9 @@ public static partial class Datum {
         this NoDatum optional
     ) {
         return new OptionalErrorDatum(
-           OptionalErrorMode.NoValue,
-           optional,
-           default
+            OptionalErrorMode.NoValue,
+            optional,
+            default
         );
     }
 
@@ -20,9 +20,9 @@ public static partial class Datum {
         this ErrorDatum error
     ) {
         return new OptionalErrorDatum(
-           OptionalErrorMode.Error,
-           default,
-           error
+            OptionalErrorMode.Error,
+            default,
+            error
         );
     }
 }

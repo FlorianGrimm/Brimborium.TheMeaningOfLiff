@@ -9,9 +9,9 @@ public static partial class Datum {
         this FailureDatum<F> failure
     ) {
         return new FailureErrorDatum<F>(
-           FailureErrorMode.Failure,
-           failure,
-           default
+            FailureErrorMode.Failure,
+            failure,
+            default
         );
     }
 
@@ -20,9 +20,9 @@ public static partial class Datum {
         this ErrorDatum error
     ) {
         return new FailureErrorDatum<F>(
-           FailureErrorMode.Error,
-           default,
-           error
+            FailureErrorMode.Error,
+            default,
+            error
         );
     }
 }

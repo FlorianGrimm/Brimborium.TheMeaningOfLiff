@@ -9,9 +9,9 @@ public static partial class Datum {
         this ValueDatum<V> value
     ) {
         return new ValueErrorDatum<V>(
-           ValueErrorMode.Value,
-           value,
-           default
+            ValueErrorMode.Value,
+            value,
+            default
         );
     }
 
@@ -20,9 +20,9 @@ public static partial class Datum {
         this ErrorDatum error
     ) {
         return new ValueErrorDatum<V>(
-           ValueErrorMode.Error,
-           default,
-           error
+            ValueErrorMode.Error,
+            default,
+            error
         );
     }
 

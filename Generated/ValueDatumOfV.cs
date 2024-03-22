@@ -29,7 +29,6 @@ public readonly partial record struct ValueDatum<V>(
     //    value = this.Value;
     //    return true;
     //}
-
 }
 
 #if UnitTest
@@ -49,7 +48,7 @@ public partial class DatumOfTTest {
         var meaning = "TheMeaningOfLiff";
         var init = new ValueDatum<int>(21, meaning, 1);
 
-        var sut = init.WithValue(42);
+        var sut = init.WithValue(new (42));
 
         Assert.Equal(42, sut.Value);
         Assert.Equal(meaning, meaning);
