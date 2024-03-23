@@ -7,13 +7,13 @@ public readonly partial record struct FailureErrorDatum<F>{
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
     public bool TryGetFailureDatum([MaybeNullWhen(false)] out FailureDatum<F> failure){
-        if (this.Mode == FailureErrorMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == FailureErrorMode.Failure) {
             failure = this.FailureDatum;
             return true;
         } else {
+            if (this.Mode == FailureErrorMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             failure = default;
             return false;
         }
@@ -32,13 +32,13 @@ public readonly partial record struct FailureErrorDatum<F>{
     }
 
     public bool TryGetErrorDatum([MaybeNullWhen(false)] out ErrorDatum error){
-        if (this.Mode == FailureErrorMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == FailureErrorMode.Error) {
             error = this.ErrorDatum;
             return true;
         } else {
+            if (this.Mode == FailureErrorMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             error = default;
             return false;
         }

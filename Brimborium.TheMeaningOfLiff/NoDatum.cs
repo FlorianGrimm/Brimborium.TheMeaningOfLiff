@@ -18,7 +18,7 @@ public readonly partial record struct NoDatum(
 
     //public OptionalValueDatum<T> ToOptionalDatum<T>() => new OptionalValueDatum<T>(OptionalValueDatumMode.NoValue, this, default);
 
-    public ValueDatum<T> WithValue<T>(T value, Meaning? meaning = default, long logicalTimestamp = 0)
+    public ValueDatum<T> WithValue2<T>(T value, Meaning? meaning = default, long logicalTimestamp = 0)
         => new ValueDatum<T>(
             value,
             meaning ?? this.Meaning,

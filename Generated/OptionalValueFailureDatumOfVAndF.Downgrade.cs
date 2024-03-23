@@ -7,13 +7,13 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
     public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
-        if (this.Mode == OptionalValueFailureMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == OptionalValueFailureMode.NoValue) {
             optional = this.OptionalDatum;
             return true;
         } else {
+            if (this.Mode == OptionalValueFailureMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             optional = default;
             return false;
         }
@@ -30,6 +30,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
                 ((this.Mode) switch {
                     OptionalValueFailureMode.Value => ValueFailureMode.Value,
                     OptionalValueFailureMode.Failure => ValueFailureMode.Failure,
+                    OptionalValueFailureMode.Uninitialized => throw new UninitializedException(),
                     _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
                 this.ValueDatum,
@@ -40,13 +41,13 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
     }
 
     public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value){
-        if (this.Mode == OptionalValueFailureMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == OptionalValueFailureMode.Value) {
             value = this.ValueDatum;
             return true;
         } else {
+            if (this.Mode == OptionalValueFailureMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             value = default;
             return false;
         }
@@ -63,6 +64,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
                 ((this.Mode) switch {
                     OptionalValueFailureMode.NoValue => OptionalFailureMode.NoValue,
                     OptionalValueFailureMode.Failure => OptionalFailureMode.Failure,
+                    OptionalValueFailureMode.Uninitialized => throw new UninitializedException(),
                     _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
                 this.OptionalDatum,
@@ -73,13 +75,13 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
     }
 
     public bool TryGetFailureDatum([MaybeNullWhen(false)] out FailureDatum<F> failure){
-        if (this.Mode == OptionalValueFailureMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == OptionalValueFailureMode.Failure) {
             failure = this.FailureDatum;
             return true;
         } else {
+            if (this.Mode == OptionalValueFailureMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             failure = default;
             return false;
         }
@@ -96,6 +98,7 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
                 ((this.Mode) switch {
                     OptionalValueFailureMode.NoValue => OptionalValueMode.NoValue,
                     OptionalValueFailureMode.Value => OptionalValueMode.Value,
+                    OptionalValueFailureMode.Uninitialized => throw new UninitializedException(),
                     _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
                 this.OptionalDatum,
@@ -118,6 +121,8 @@ public readonly partial record struct OptionalValueFailureDatum<V, F>{
             value = default;
             elseDatum = new OptionalFailureDatum<F>(OptionalFailureMode.Failure, default, this.FailureDatum);
             return false;
+        } else if (this.Mode == OptionalValueFailureMode.Uninitialized) {
+            throw new UninitializedException();
         } else {
             throw new UninitializedException($"Mode:{this.Mode}");
         }

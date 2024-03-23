@@ -7,13 +7,13 @@ public readonly partial record struct OptionalErrorDatum{
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
     public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
-        if (this.Mode == OptionalErrorMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == OptionalErrorMode.NoValue) {
             optional = this.OptionalDatum;
             return true;
         } else {
+            if (this.Mode == OptionalErrorMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             optional = default;
             return false;
         }
@@ -32,13 +32,13 @@ public readonly partial record struct OptionalErrorDatum{
     }
 
     public bool TryGetErrorDatum([MaybeNullWhen(false)] out ErrorDatum error){
-        if (this.Mode == OptionalErrorMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == OptionalErrorMode.Error) {
             error = this.ErrorDatum;
             return true;
         } else {
+            if (this.Mode == OptionalErrorMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             error = default;
             return false;
         }

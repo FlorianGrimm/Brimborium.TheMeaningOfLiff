@@ -260,13 +260,13 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                 } else {
                     foreach (var (extractType, downgradeType) in fullNamePart.ListDowngrade) {
                         sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "([MaybeNullWhen(false)] out ", extractType.ClassName, " ", extractType.ArgName, "){");
-                        sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeTypeName, ".Uninitialized) {");
-                        sb.AppendLine("""            throw new InvalidOperationException($"Mode:{this.Mode}");""");
-                        sb.AppendLine("        }");
                         sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeTypeName, ".", extractType.Parts[0].ModeEnumValueName, ") {");
                         sb.AppendLine("            ", extractType.ArgName, " = this.", extractType.Parts[0].PartName, ";");
                         sb.AppendLine("            return true;");
                         sb.AppendLine("        } else {");
+                        sb.AppendLine("            if (this.Mode == ", fullNamePart.ModeTypeName, ".Uninitialized) {");
+                        sb.AppendLine("""                throw new InvalidOperationException($"Mode:{this.Mode}");""");
+                        sb.AppendLine("            }");
                         sb.AppendLine("            ", extractType.ArgName, " = default;");
                         sb.AppendLine("            return false;");
                         sb.AppendLine("        }");
@@ -288,6 +288,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                             foreach (var downgradeTypeIndex in downgradeType.Parts.ToListIndex()) {
                                 sb.AppendLine("                    ", fullNamePart.ModeTypeName, ".", downgradeTypeIndex.Item.ModeEnumValueName, " => ", downgradeType.ModeTypeName, ".", downgradeTypeIndex.Item.ModeEnumValueName, ",");
                             }
+                            sb.AppendLine("                    ", fullNamePart.ModeTypeName, """.Uninitialized => throw new UninitializedException(),""");
                             sb.AppendLine("""                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")""");
                             sb.AppendLine("                }),");
                             foreach (var downgradeTypeIndex in downgradeType.Parts.ToListIndex()) {
@@ -334,6 +335,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                             }
                             sb.AppendLine("            return false;");
                         }
+                        sb.AppendLine("        } else if (this.Mode == ",fullNamePart.ModeTypeName,".Uninitialized) {");
+                        sb.AppendLine("            throw new UninitializedException();");
                         sb.AppendLine("        } else {");
                         sb.AppendLine("""            throw new UninitializedException($"Mode:{this.Mode}");""");
                         sb.AppendLine("        }");
@@ -388,46 +391,6 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine($"        }};");
                     sb.AppendLine($"    }}");
                     sb.AppendLine("");
-                    sb.AppendLine("// generated 3");
-                    /*
-                    sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "(out ", extractType.ClassName, " ", extractType.ArgName, "){");
-                    sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeName, ".", extractType.Parts[0].EnumName, ") {");
-                    sb.AppendLine("            ", extractType.ArgName, " = this.", extractType.Parts[0].PartName, ";");
-                    sb.AppendLine("            return true;");
-                    sb.AppendLine("        } else {");
-                    sb.AppendLine("            ", extractType.ArgName, " = default;");
-                    sb.AppendLine("            return false;");
-                    sb.AppendLine("        }");
-                    sb.AppendLine("    }");
-                    sb.AppendLine("");
-
-                    sb.AppendLine("    public bool TryGet", extractType.Parts[0].PartName, "(out ", extractType.ClassName, " ", extractType.ArgName, "Datum, out ", downgradeType.ClassName, " ", downgradeType.ArgName, "Datum){");
-                    sb.AppendLine("        if (this.Mode == ", fullNamePart.ModeName, ".", extractType.Parts[0].EnumName, ") {");
-                    sb.AppendLine("            ", extractType.ArgName, "Datum = this.", extractType.Parts[0].PartName, ";");
-                    sb.AppendLine("            ", downgradeType.ArgName, "Datum = default;");
-                    sb.AppendLine("            return true;");
-                    sb.AppendLine("        } else {");
-                    sb.AppendLine("            ", extractType.ArgName, "Datum = default;");
-                    if (downgradeType.Parts.Length == 1) {
-                        sb.AppendLine("            ", downgradeType.ArgName, "Datum = this.", downgradeType.Parts[0].PartName, ";");
-                    } else {
-                        sb.AppendLine("            ", downgradeType.ArgName, "Datum = new ", downgradeType.ClassName, "(");
-                        sb.AppendLine("                ((this.Mode) switch {");
-                        foreach (var downgradeTypeIndex in downgradeType.Parts.ToListIndex()) {
-                            sb.AppendLine("                    ", fullNamePart.ModeName, ".", downgradeTypeIndex.Item.EnumName, " => ", downgradeType.ModeName, ".", downgradeTypeIndex.Item.EnumName, ",");
-                        }
-                        sb.AppendLine("""                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")""");
-                        sb.AppendLine("                }),");
-                        foreach (var downgradeTypeIndex in downgradeType.Parts.ToListIndex()) {
-                            sb.AppendLine("                this.", downgradeTypeIndex.Item.PartName, downgradeTypeIndex.isLast ? "" : ",");
-                        }
-                        sb.AppendLine("                );");
-                    }
-                    sb.AppendLine("            return false;");
-                    sb.AppendLine("        }");
-                    sb.AppendLine("    }");
-                    sb.AppendLine("");
-                    */
                 }
 
                 /*
@@ -483,7 +446,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             }
             sb.AppendLine("}");
             sb.AppendLine("");
-            sb.AppendLine("    // generated 3 type cast");
+            sb.AppendLine("// generated 3");
         }
 
         // generated 4 Construction
@@ -682,6 +645,39 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         sb.AppendLine("");
                     }
                 }
+                {
+                    var resultiType = namePartValue.iType | fullNamePart.iType;
+                    if (dictFullNamePart.TryGetValue(resultiType, out var fullNamePartResult)) {
+                        var listMissingGenericArgument = CalsListMissingGenericArgument(fullNamePartResult.ListGenericArgument, fullNamePart.ListGenericArgument);
+                        var missingGenericArgument = GenericArgumentToString(listMissingGenericArgument);
+
+                        sb.AppendLine("    public ", fullNamePartResult.ClassName, " WithValue", missingGenericArgument, "(V value, Meaning? meaning = default, long logicalTimestamp = 0)");
+                        if (fullNamePartResult.Parts.Length == 1) {
+                            sb.AppendLine("        => new ValueDatum<V>(value, meaning ?? this.Meaning, LogicalTimestampUtility.Next(this.LogicalTimestamp, logicalTimestamp));");
+                        } else {
+                            sb.Append("        => new ", fullNamePartResult.ClassName, "(");
+                            sb.Append(fullNamePartResult.ModeTypeName, ".", (string)namePartValue.ModeEnumValueName);
+                            foreach (var resultPart in fullNamePartResult.Parts) {
+                                if (resultPart.ModeEnumValueName == namePartValue.ModeEnumValueName) {
+                                    sb.Append(", new ValueDatum<V>(value, meaning ?? this.Meaning, LogicalTimestampUtility.Next(this.LogicalTimestamp, logicalTimestamp))");
+                                } else {
+                                    sb.Append(", default");
+                                }
+                            }
+                            sb.AppendLine(");");
+                        }
+                        /*
+                        sb.AppendLine("");
+                        sb.AppendLine("    public ValueDatum<T> WithValue<T>(T value, Meaning? meaning = default, long logicalTimestamp = 0)");
+                        sb.AppendLine("        => new ValueDatum<T>(");
+                        sb.AppendLine("            value,");
+                        sb.AppendLine("            meaning ?? this.Meaning,");
+                        sb.AppendLine("            logicalTimestamp > 0 ? logicalTimestamp : this.LogicalTimestamp);");
+                        */
+                    }
+                }
+
+
             }
             //
             sb.AppendLine("}");

@@ -7,13 +7,13 @@ public readonly partial record struct ValueFailureDatum<V, F>{
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
     public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value){
-        if (this.Mode == ValueFailureMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == ValueFailureMode.Value) {
             value = this.ValueDatum;
             return true;
         } else {
+            if (this.Mode == ValueFailureMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             value = default;
             return false;
         }
@@ -32,13 +32,13 @@ public readonly partial record struct ValueFailureDatum<V, F>{
     }
 
     public bool TryGetFailureDatum([MaybeNullWhen(false)] out FailureDatum<F> failure){
-        if (this.Mode == ValueFailureMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == ValueFailureMode.Failure) {
             failure = this.FailureDatum;
             return true;
         } else {
+            if (this.Mode == ValueFailureMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             failure = default;
             return false;
         }
@@ -65,6 +65,8 @@ public readonly partial record struct ValueFailureDatum<V, F>{
             value = default;
             elseDatum = this.FailureDatum;
             return false;
+        } else if (this.Mode == ValueFailureMode.Uninitialized) {
+            throw new UninitializedException();
         } else {
             throw new UninitializedException($"Mode:{this.Mode}");
         }

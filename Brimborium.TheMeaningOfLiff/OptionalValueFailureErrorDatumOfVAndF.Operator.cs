@@ -77,6 +77,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F> {
     public OptionalValueFailureErrorDatum<V, F> WithErrorDatum(ErrorDatum value)
         => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.Error, default, default, default, value);
 
+    public OptionalValueFailureErrorDatum<V, F> WithValue(V value, Meaning? meaning = default, long logicalTimestamp = 0)
+        => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.Value, default, new ValueDatum<V>(value, meaning ?? this.Meaning, LogicalTimestampUtility.Next(this.LogicalTimestamp, logicalTimestamp)), default, default);
 }
 
 // generated 5

@@ -7,13 +7,13 @@ public readonly partial record struct OptionalValueDatum<V>{
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
     public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
-        if (this.Mode == OptionalValueMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == OptionalValueMode.NoValue) {
             optional = this.OptionalDatum;
             return true;
         } else {
+            if (this.Mode == OptionalValueMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             optional = default;
             return false;
         }
@@ -32,13 +32,13 @@ public readonly partial record struct OptionalValueDatum<V>{
     }
 
     public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value){
-        if (this.Mode == OptionalValueMode.Uninitialized) {
-            throw new InvalidOperationException($"Mode:{this.Mode}");
-        }
         if (this.Mode == OptionalValueMode.Value) {
             value = this.ValueDatum;
             return true;
         } else {
+            if (this.Mode == OptionalValueMode.Uninitialized) {
+                throw new InvalidOperationException($"Mode:{this.Mode}");
+            }
             value = default;
             return false;
         }
@@ -65,6 +65,8 @@ public readonly partial record struct OptionalValueDatum<V>{
             value = default;
             elseDatum = this.OptionalDatum;
             return false;
+        } else if (this.Mode == OptionalValueMode.Uninitialized) {
+            throw new UninitializedException();
         } else {
             throw new UninitializedException($"Mode:{this.Mode}");
         }

@@ -55,6 +55,8 @@ public readonly partial record struct ValueErrorDatum<V> {
     public ValueErrorDatum<V> WithErrorDatum(ErrorDatum value)
         => new ValueErrorDatum<V>(ValueErrorMode.Error, default, value);
 
+    public ValueErrorDatum<V> WithValue(V value, Meaning? meaning = default, long logicalTimestamp = 0)
+        => new ValueErrorDatum<V>(ValueErrorMode.Value, new ValueDatum<V>(value, meaning ?? this.Meaning, LogicalTimestampUtility.Next(this.LogicalTimestamp, logicalTimestamp)), default);
 }
 
 // generated 5

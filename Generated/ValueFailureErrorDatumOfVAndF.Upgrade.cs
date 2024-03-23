@@ -15,7 +15,6 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
         };
     }
 
-// generated 3
 
     // generated 3 type cast
 
@@ -66,4 +65,4 @@ public readonly partial record struct ValueFailureErrorDatum<V, F>{
     }
 }
 
-    // generated 3 type cast
+// generated 3

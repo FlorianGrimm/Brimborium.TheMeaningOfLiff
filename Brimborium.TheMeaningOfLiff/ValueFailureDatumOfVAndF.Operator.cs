@@ -53,6 +53,8 @@ public readonly partial record struct ValueFailureDatum<V, F> {
     public ValueFailureErrorDatum<V, F> WithErrorDatum(ErrorDatum value)
         => new ValueFailureErrorDatum<V, F>(ValueFailureErrorMode.Error, default, default, value);
 
+    public ValueFailureDatum<V, F> WithValue(V value, Meaning? meaning = default, long logicalTimestamp = 0)
+        => new ValueFailureDatum<V, F>(ValueFailureMode.Value, new ValueDatum<V>(value, meaning ?? this.Meaning, LogicalTimestampUtility.Next(this.LogicalTimestamp, logicalTimestamp)), default);
 }
 
 // generated 5
