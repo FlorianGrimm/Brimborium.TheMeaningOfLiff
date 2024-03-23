@@ -6,7 +6,10 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptionalDatum(out NoDatum optional){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
+        if (this.Mode == OptionalValueErrorMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueErrorMode.NoValue) {
             optional = this.OptionalDatum;
             return true;
@@ -16,7 +19,7 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetOptionalDatum(out NoDatum optionalDatum, out ValueErrorDatum<V> valueErrorDatum){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optionalDatum, [MaybeNullWhen(true)] out ValueErrorDatum<V> valueErrorDatum){
         if (this.Mode == OptionalValueErrorMode.NoValue) {
             optionalDatum = this.OptionalDatum;
             valueErrorDatum = default;
@@ -27,7 +30,7 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                 ((this.Mode) switch {
                     OptionalValueErrorMode.Value => ValueErrorMode.Value,
                     OptionalValueErrorMode.Error => ValueErrorMode.Error,
-                    _ => throw new InvalidOperationException()
+                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
                 this.ValueDatum,
                 this.ErrorDatum
@@ -36,7 +39,10 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetValueDatum(out ValueDatum<V> value){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value){
+        if (this.Mode == OptionalValueErrorMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueErrorMode.Value) {
             value = this.ValueDatum;
             return true;
@@ -46,7 +52,7 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetValueDatum(out ValueDatum<V> valueDatum, out OptionalErrorDatum optionalErrorDatum){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> valueDatum, [MaybeNullWhen(true)] out OptionalErrorDatum optionalErrorDatum){
         if (this.Mode == OptionalValueErrorMode.Value) {
             valueDatum = this.ValueDatum;
             optionalErrorDatum = default;
@@ -57,7 +63,7 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                 ((this.Mode) switch {
                     OptionalValueErrorMode.NoValue => OptionalErrorMode.NoValue,
                     OptionalValueErrorMode.Error => OptionalErrorMode.Error,
-                    _ => throw new InvalidOperationException()
+                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
                 this.OptionalDatum,
                 this.ErrorDatum
@@ -66,7 +72,10 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetErrorDatum(out ErrorDatum error){
+    public bool TryGetErrorDatum([MaybeNullWhen(false)] out ErrorDatum error){
+        if (this.Mode == OptionalValueErrorMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueErrorMode.Error) {
             error = this.ErrorDatum;
             return true;
@@ -76,7 +85,7 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetErrorDatum(out ErrorDatum errorDatum, out OptionalValueDatum<V> optionalValueDatum){
+    public bool TryGetErrorDatum([MaybeNullWhen(false)] out ErrorDatum errorDatum, [MaybeNullWhen(true)] out OptionalValueDatum<V> optionalValueDatum){
         if (this.Mode == OptionalValueErrorMode.Error) {
             errorDatum = this.ErrorDatum;
             optionalValueDatum = default;
@@ -87,7 +96,7 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                 ((this.Mode) switch {
                     OptionalValueErrorMode.NoValue => OptionalValueMode.NoValue,
                     OptionalValueErrorMode.Value => OptionalValueMode.Value,
-                    _ => throw new InvalidOperationException()
+                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
                 this.OptionalDatum,
                 this.ValueDatum
@@ -96,5 +105,22 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
+    public bool TryGetValue([MaybeNullWhen(false)] out V value, [MaybeNullWhen(true)] out OptionalErrorDatum elseDatum) {
+        if (this.Mode == OptionalValueErrorMode.Value) {
+            value = this.ValueDatum.Value;
+            elseDatum = default;
+            return true;
+        } else if (this.Mode == OptionalValueErrorMode.NoValue) {
+            value = default;
+            elseDatum = new OptionalErrorDatum(OptionalErrorMode.NoValue, this.OptionalDatum, default);
+            return false;
+        } else if (this.Mode == OptionalValueErrorMode.Error) {
+            value = default;
+            elseDatum = new OptionalErrorDatum(OptionalErrorMode.Error, default, this.ErrorDatum);
+            return false;
+        } else {
+            throw new UninitializedException($"Mode:{this.Mode}");
+        }
+    }
 }
 // generated 2 Downgrade

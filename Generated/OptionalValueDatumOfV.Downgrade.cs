@@ -6,7 +6,10 @@ public readonly partial record struct OptionalValueDatum<V>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptionalDatum(out NoDatum optional){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
+        if (this.Mode == OptionalValueMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueMode.NoValue) {
             optional = this.OptionalDatum;
             return true;
@@ -16,7 +19,7 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
-    public bool TryGetOptionalDatum(out NoDatum optionalDatum, out ValueDatum<V> valueDatum){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optionalDatum, [MaybeNullWhen(true)] out ValueDatum<V> valueDatum){
         if (this.Mode == OptionalValueMode.NoValue) {
             optionalDatum = this.OptionalDatum;
             valueDatum = default;
@@ -28,7 +31,10 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
-    public bool TryGetValueDatum(out ValueDatum<V> value){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value){
+        if (this.Mode == OptionalValueMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueMode.Value) {
             value = this.ValueDatum;
             return true;
@@ -38,7 +44,7 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
-    public bool TryGetValueDatum(out ValueDatum<V> valueDatum, out NoDatum optionalDatum){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> valueDatum, [MaybeNullWhen(true)] out NoDatum optionalDatum){
         if (this.Mode == OptionalValueMode.Value) {
             valueDatum = this.ValueDatum;
             optionalDatum = default;
@@ -50,5 +56,18 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
+    public bool TryGetValue([MaybeNullWhen(false)] out V value, [MaybeNullWhen(true)] out NoDatum elseDatum) {
+        if (this.Mode == OptionalValueMode.Value) {
+            value = this.ValueDatum.Value;
+            elseDatum = default;
+            return true;
+        } else if (this.Mode == OptionalValueMode.NoValue) {
+            value = default;
+            elseDatum = this.OptionalDatum;
+            return false;
+        } else {
+            throw new UninitializedException($"Mode:{this.Mode}");
+        }
+    }
 }
 // generated 2 Downgrade

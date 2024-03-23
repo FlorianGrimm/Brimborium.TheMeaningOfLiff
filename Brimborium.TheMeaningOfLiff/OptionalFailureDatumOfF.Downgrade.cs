@@ -6,9 +6,12 @@ public readonly partial record struct OptionalFailureDatum<F>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptional(out NoDatum optional){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
+        if (this.Mode == OptionalFailureMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalFailureMode.NoValue) {
-            optional = this.Optional;
+            optional = this.OptionalDatum;
             return true;
         } else {
             optional = default;
@@ -16,21 +19,24 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out FailureDatum<F> failureDatum){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optionalDatum, [MaybeNullWhen(true)] out FailureDatum<F> failureDatum){
         if (this.Mode == OptionalFailureMode.NoValue) {
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             failureDatum = default;
             return true;
         } else {
             optionalDatum = default;
-            failureDatum = this.Failure;
+            failureDatum = this.FailureDatum;
             return false;
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failure){
+    public bool TryGetFailureDatum([MaybeNullWhen(false)] out FailureDatum<F> failure){
+        if (this.Mode == OptionalFailureMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalFailureMode.Failure) {
-            failure = this.Failure;
+            failure = this.FailureDatum;
             return true;
         } else {
             failure = default;
@@ -38,16 +44,17 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetFailure(out FailureDatum<F> failureDatum, out NoDatum optionalDatum){
+    public bool TryGetFailureDatum([MaybeNullWhen(false)] out FailureDatum<F> failureDatum, [MaybeNullWhen(true)] out NoDatum optionalDatum){
         if (this.Mode == OptionalFailureMode.Failure) {
-            failureDatum = this.Failure;
+            failureDatum = this.FailureDatum;
             optionalDatum = default;
             return true;
         } else {
             failureDatum = default;
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             return false;
         }
     }
 
 }
+// generated 2 Downgrade

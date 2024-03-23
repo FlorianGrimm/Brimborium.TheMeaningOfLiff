@@ -6,9 +6,12 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptional(out NoDatum optional){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
+        if (this.Mode == OptionalValueErrorMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueErrorMode.NoValue) {
-            optional = this.Optional;
+            optional = this.OptionalDatum;
             return true;
         } else {
             optional = default;
@@ -16,9 +19,9 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out ValueErrorDatum<V> valueErrorDatum){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optionalDatum, [MaybeNullWhen(true)] out ValueErrorDatum<V> valueErrorDatum){
         if (this.Mode == OptionalValueErrorMode.NoValue) {
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             valueErrorDatum = default;
             return true;
         } else {
@@ -27,18 +30,21 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                 ((this.Mode) switch {
                     OptionalValueErrorMode.Value => ValueErrorMode.Value,
                     OptionalValueErrorMode.Error => ValueErrorMode.Error,
-                    _ => throw new InvalidOperationException()
+                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
-                this.Value,
-                this.Error
+                this.ValueDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> value){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value){
+        if (this.Mode == OptionalValueErrorMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueErrorMode.Value) {
-            value = this.Value;
+            value = this.ValueDatum;
             return true;
         } else {
             value = default;
@@ -46,9 +52,9 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> valueDatum, out OptionalErrorDatum optionalErrorDatum){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> valueDatum, [MaybeNullWhen(true)] out OptionalErrorDatum optionalErrorDatum){
         if (this.Mode == OptionalValueErrorMode.Value) {
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             optionalErrorDatum = default;
             return true;
         } else {
@@ -57,18 +63,21 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                 ((this.Mode) switch {
                     OptionalValueErrorMode.NoValue => OptionalErrorMode.NoValue,
                     OptionalValueErrorMode.Error => OptionalErrorMode.Error,
-                    _ => throw new InvalidOperationException()
+                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
-                this.Optional,
-                this.Error
+                this.OptionalDatum,
+                this.ErrorDatum
                 );
             return false;
         }
     }
 
-    public bool TryGetError(out ErrorDatum error){
+    public bool TryGetErrorDatum([MaybeNullWhen(false)] out ErrorDatum error){
+        if (this.Mode == OptionalValueErrorMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueErrorMode.Error) {
-            error = this.Error;
+            error = this.ErrorDatum;
             return true;
         } else {
             error = default;
@@ -76,9 +85,9 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
         }
     }
 
-    public bool TryGetError(out ErrorDatum errorDatum, out OptionalValueDatum<V> optionalValueDatum){
+    public bool TryGetErrorDatum([MaybeNullWhen(false)] out ErrorDatum errorDatum, [MaybeNullWhen(true)] out OptionalValueDatum<V> optionalValueDatum){
         if (this.Mode == OptionalValueErrorMode.Error) {
-            errorDatum = this.Error;
+            errorDatum = this.ErrorDatum;
             optionalValueDatum = default;
             return true;
         } else {
@@ -87,13 +96,31 @@ public readonly partial record struct OptionalValueErrorDatum<V>{
                 ((this.Mode) switch {
                     OptionalValueErrorMode.NoValue => OptionalValueMode.NoValue,
                     OptionalValueErrorMode.Value => OptionalValueMode.Value,
-                    _ => throw new InvalidOperationException()
+                    _ => throw new InvalidOperationException($"Mode:{this.Mode}")
                 }),
-                this.Optional,
-                this.Value
+                this.OptionalDatum,
+                this.ValueDatum
                 );
             return false;
         }
     }
 
+    public bool TryGetValue([MaybeNullWhen(false)] out V value, [MaybeNullWhen(true)] out OptionalErrorDatum elseDatum) {
+        if (this.Mode == OptionalValueErrorMode.Value) {
+            value = this.ValueDatum.Value;
+            elseDatum = default;
+            return true;
+        } else if (this.Mode == OptionalValueErrorMode.NoValue) {
+            value = default;
+            elseDatum = new OptionalErrorDatum(OptionalErrorMode.NoValue, this.OptionalDatum, default);
+            return false;
+        } else if (this.Mode == OptionalValueErrorMode.Error) {
+            value = default;
+            elseDatum = new OptionalErrorDatum(OptionalErrorMode.Error, default, this.ErrorDatum);
+            return false;
+        } else {
+            throw new UninitializedException($"Mode:{this.Mode}");
+        }
+    }
 }
+// generated 2 Downgrade

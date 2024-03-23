@@ -13,3 +13,5 @@ public static partial class Datum {
         return new FailureDatum<F>(Value, Meaning, LogicalTimestamp);
     }
 }
+
+// generated 4

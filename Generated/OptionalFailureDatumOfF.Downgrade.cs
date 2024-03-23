@@ -6,7 +6,10 @@ public readonly partial record struct OptionalFailureDatum<F>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptionalDatum(out NoDatum optional){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
+        if (this.Mode == OptionalFailureMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalFailureMode.NoValue) {
             optional = this.OptionalDatum;
             return true;
@@ -16,7 +19,7 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetOptionalDatum(out NoDatum optionalDatum, out FailureDatum<F> failureDatum){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optionalDatum, [MaybeNullWhen(true)] out FailureDatum<F> failureDatum){
         if (this.Mode == OptionalFailureMode.NoValue) {
             optionalDatum = this.OptionalDatum;
             failureDatum = default;
@@ -28,7 +31,10 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetFailureDatum(out FailureDatum<F> failure){
+    public bool TryGetFailureDatum([MaybeNullWhen(false)] out FailureDatum<F> failure){
+        if (this.Mode == OptionalFailureMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalFailureMode.Failure) {
             failure = this.FailureDatum;
             return true;
@@ -38,7 +44,7 @@ public readonly partial record struct OptionalFailureDatum<F>{
         }
     }
 
-    public bool TryGetFailureDatum(out FailureDatum<F> failureDatum, out NoDatum optionalDatum){
+    public bool TryGetFailureDatum([MaybeNullWhen(false)] out FailureDatum<F> failureDatum, [MaybeNullWhen(true)] out NoDatum optionalDatum){
         if (this.Mode == OptionalFailureMode.Failure) {
             failureDatum = this.FailureDatum;
             optionalDatum = default;

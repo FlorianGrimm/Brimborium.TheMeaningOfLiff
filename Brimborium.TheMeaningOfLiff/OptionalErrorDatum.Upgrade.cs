@@ -8,31 +8,37 @@ public readonly partial record struct OptionalErrorDatum{
 
     public OptionalValueErrorDatum<V> AsOptionalValueErrorDatum<V>() {
         return this.Mode switch {
-            OptionalErrorMode.NoValue => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.NoValue, this.Optional, default, default),
-            OptionalErrorMode.Error => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.Error, default, default, this.Error),
+            OptionalErrorMode.NoValue => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.NoValue, this.OptionalDatum, default, default),
+            OptionalErrorMode.Error => new OptionalValueErrorDatum<V>(OptionalValueErrorMode.Error, default, default, this.ErrorDatum),
             _ => throw new UninitializedException()
         };
     }
+
+// generated 3
 
 // generated 3 Upgrade
 
     public OptionalFailureErrorDatum<F> AsOptionalFailureErrorDatum<F>() {
         return this.Mode switch {
-            OptionalErrorMode.NoValue => new OptionalFailureErrorDatum<F>(OptionalFailureErrorMode.NoValue, this.Optional, default, default),
-            OptionalErrorMode.Error => new OptionalFailureErrorDatum<F>(OptionalFailureErrorMode.Error, default, default, this.Error),
+            OptionalErrorMode.NoValue => new OptionalFailureErrorDatum<F>(OptionalFailureErrorMode.NoValue, this.OptionalDatum, default, default),
+            OptionalErrorMode.Error => new OptionalFailureErrorDatum<F>(OptionalFailureErrorMode.Error, default, default, this.ErrorDatum),
             _ => throw new UninitializedException()
         };
     }
+
+// generated 3
 
 // generated 3 Upgrade
 
     public OptionalValueFailureErrorDatum<V, F> AsOptionalValueFailureErrorDatum<V, F>() {
         return this.Mode switch {
-            OptionalErrorMode.NoValue => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.NoValue, this.Optional, default, default, default),
-            OptionalErrorMode.Error => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.Error, default, default, default, this.Error),
+            OptionalErrorMode.NoValue => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.NoValue, this.OptionalDatum, default, default, default),
+            OptionalErrorMode.Error => new OptionalValueFailureErrorDatum<V, F>(OptionalValueFailureErrorMode.Error, default, default, default, this.ErrorDatum),
             _ => throw new UninitializedException()
         };
     }
+
+// generated 3
 
     // generated 3 type cast
 
@@ -46,3 +52,5 @@ public readonly partial record struct OptionalErrorDatum{
         return new OptionalErrorDatum(OptionalErrorMode.Error, default, value);
     }
 }
+
+    // generated 3 type cast

@@ -6,9 +6,12 @@ public readonly partial record struct OptionalValueDatum<V>{
     public NoDatum ToNoDatum()
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
-    public bool TryGetOptional(out NoDatum optional){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optional){
+        if (this.Mode == OptionalValueMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueMode.NoValue) {
-            optional = this.Optional;
+            optional = this.OptionalDatum;
             return true;
         } else {
             optional = default;
@@ -16,21 +19,24 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
-    public bool TryGetOptional(out NoDatum optionalDatum, out ValueDatum<V> valueDatum){
+    public bool TryGetOptionalDatum([MaybeNullWhen(false)] out NoDatum optionalDatum, [MaybeNullWhen(true)] out ValueDatum<V> valueDatum){
         if (this.Mode == OptionalValueMode.NoValue) {
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             valueDatum = default;
             return true;
         } else {
             optionalDatum = default;
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             return false;
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> value){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> value){
+        if (this.Mode == OptionalValueMode.Uninitialized) {
+            throw new InvalidOperationException($"Mode:{this.Mode}");
+        }
         if (this.Mode == OptionalValueMode.Value) {
-            value = this.Value;
+            value = this.ValueDatum;
             return true;
         } else {
             value = default;
@@ -38,16 +44,30 @@ public readonly partial record struct OptionalValueDatum<V>{
         }
     }
 
-    public bool TryGetValue(out ValueDatum<V> valueDatum, out NoDatum optionalDatum){
+    public bool TryGetValueDatum([MaybeNullWhen(false)] out ValueDatum<V> valueDatum, [MaybeNullWhen(true)] out NoDatum optionalDatum){
         if (this.Mode == OptionalValueMode.Value) {
-            valueDatum = this.Value;
+            valueDatum = this.ValueDatum;
             optionalDatum = default;
             return true;
         } else {
             valueDatum = default;
-            optionalDatum = this.Optional;
+            optionalDatum = this.OptionalDatum;
             return false;
         }
     }
 
+    public bool TryGetValue([MaybeNullWhen(false)] out V value, [MaybeNullWhen(true)] out NoDatum elseDatum) {
+        if (this.Mode == OptionalValueMode.Value) {
+            value = this.ValueDatum.Value;
+            elseDatum = default;
+            return true;
+        } else if (this.Mode == OptionalValueMode.NoValue) {
+            value = default;
+            elseDatum = this.OptionalDatum;
+            return false;
+        } else {
+            throw new UninitializedException($"Mode:{this.Mode}");
+        }
+    }
 }
+// generated 2 Downgrade

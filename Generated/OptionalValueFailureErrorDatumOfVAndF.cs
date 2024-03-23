@@ -2,7 +2,13 @@ namespace Brimborium.TheMeaningOfLiff;
 
 // generated 1 type
 
-public enum OptionalValueFailureErrorMode { NoValue, Value, Failure, Error }
+public enum OptionalValueFailureErrorMode { 
+    Uninitialized = 0,
+    NoValue = 1,
+    Value = 2,
+    Failure = 4,
+    Error = 8
+ }
 
 [DebuggerNonUserCode]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]

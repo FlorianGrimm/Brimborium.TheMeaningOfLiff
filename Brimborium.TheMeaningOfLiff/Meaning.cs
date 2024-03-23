@@ -1,22 +1,9 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
 public record class Meaning(
-    EventId EventId,
-    string Message
-    );
-
-// TODO: WEICHEI
-//public interface IWithMeaning<T> : IWithMeaning {
-//    T Value { get; }
-//    // Brimborium.TheMeaningOfLiff.Meaning? Meaning { get; }
-//}
-
-//public record class PropertyMeaning<T>(
-//    T Value,
-//    Brimborium.TheMeaningOfLiff.Meaning? Meaning
-//    ) : IWithMeaning;
-
-//public record struct ValueMeaning<T>(
-//    T Value,
-//    Brimborium.TheMeaningOfLiff.Meaning? Meaning 
-//    ): IWithMeaning;
+    Microsoft.Extensions.Logging.EventId EventId,
+    string Message) {
+    public Meaning(string message, int eventId = 0, string? eventIdName = null)
+        : this(EventId: new Microsoft.Extensions.Logging.EventId(id: eventId, name: eventIdName), Message: message) {
+    }
+}

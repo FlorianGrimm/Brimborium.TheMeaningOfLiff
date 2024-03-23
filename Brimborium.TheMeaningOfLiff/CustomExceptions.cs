@@ -9,7 +9,11 @@ public sealed class UninitializedException : Exception
 {
     private static UninitializedException? _Instance;
     public static UninitializedException Instance => _Instance ??= new UninitializedException();
+    
     public UninitializedException() : base("Uninitialized") { }
+    
+    public UninitializedException(string message) : base(message) { }
+
     [Obsolete]
     private UninitializedException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 }

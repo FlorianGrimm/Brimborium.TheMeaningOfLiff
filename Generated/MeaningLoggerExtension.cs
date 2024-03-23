@@ -47,17 +47,12 @@
             }
         }
 
-        [LoggerMessage(
-            Level = LogLevel.Debug,
-            Message = "flowcondition {meaning}"
-            )]
-        public static partial void LogFlowControl(this ILogger logger, string meaning);
-
         public static void LogFlowControl(this ILogger logger, IWithMeaning datum) {
             if (!logger.IsEnabled(LogLevel.Debug)) { return; }
             var meaning = datum.Meaning;
-            if (!string.IsNullOrEmpty(meaning)) {
-                logger.LogFlowControl(meaning!);
+            if (datum.Meaning is not null 
+                && !string.IsNullOrEmpty(meaning.Message)) {
+                logger.LogDebug(meaning.EventId, meaning.Message);
             }
         }
 

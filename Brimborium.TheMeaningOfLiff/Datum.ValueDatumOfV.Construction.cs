@@ -13,3 +13,5 @@ public static partial class Datum {
         return new ValueDatum<V>(Value, Meaning, LogicalTimestamp);
     }
 }
+
+// generated 4

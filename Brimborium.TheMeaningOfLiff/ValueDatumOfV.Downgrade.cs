@@ -7,3 +7,4 @@ public readonly partial record struct ValueDatum<V>{
         => new NoDatum(this.Meaning, this.LogicalTimestamp);
 
 }
+// generated 2 Downgrade
