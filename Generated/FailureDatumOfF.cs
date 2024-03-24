@@ -11,7 +11,8 @@ public readonly partial record struct FailureDatum<F>(
     [property: Orleans.Id(1)] Meaning? Meaning = default,
     [property: Orleans.Id(2)] long LogicalTimestamp = 0
     )
-    : IDatum<F>
+    : IDatum
+    , IDatum<F>
     , IWithMeaning
     , ILogicalTimestamp {
 

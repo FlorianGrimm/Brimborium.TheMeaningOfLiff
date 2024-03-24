@@ -13,7 +13,8 @@ public readonly partial record struct ErrorDatum(
     [property: Orleans.Id(2)] long LogicalTimestamp = 0,
     [property: Orleans.Id(3)] bool IsLogged = false
     )
-    : IWithMeaning
+    : IDatum
+    , IWithMeaning
     , ILogicalTimestamp {
 
 #if Orleans

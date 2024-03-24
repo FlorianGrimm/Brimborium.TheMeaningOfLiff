@@ -10,7 +10,8 @@ public readonly partial record struct ValueDatum<V>(
     V Value,
     Meaning? Meaning = default,
     long LogicalTimestamp = 0)
-    : IDatum<V>
+    : IDatum
+    , IDatum<V>
     , ISuccessDatum<V>
     , IWithMeaning
     , ILogicalTimestamp {

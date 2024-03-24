@@ -217,7 +217,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.Append("    ").Append(parameter.Item.ToString()).Append(parameter.isLast ? "" : ",").AppendLine();
                 }
 
-                sb.AppendLine(") : IWithMeaning, ILogicalTimestamp {");
+                sb.AppendLine(") : IDatum, IWithMeaning, ILogicalTimestamp {");
                 sb.AppendLine("    private string GetDebuggerDisplay() => this.ToString();");
                 sb.AppendLine();
 
@@ -577,11 +577,12 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                     sb.AppendLine("        ", fullNameOut, " defaultValue,");
                     foreach (var partIndex in fullNamePart.Parts.ToListIndex()) {
                         var funcName = $"func{partIndex.Item.PartName}";
-                        if (partIndex.Item.iType == iTypeOptional) {
-                            sb.AppendLine("        Func<", fullNameOut, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
-                        } else {
-                            sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
-                        }
+                        //if (partIndex.Item.iType == iTypeOptional) {
+                        //    sb.AppendLine("        Func<", fullNameOut, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                        //} else {
+                        //    sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
+                        //}
+                        sb.AppendLine("        Func<", partIndex.Item.ClassName, ", ", fullNameOut, ", ", fullNameOut, ">? ", funcName, " = default", partIndex.isLast ? "" : ",");
                     }
                     sb.AppendLine("        ) {");
                     if (hasError) {
@@ -594,7 +595,8 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
                         var funcName = $"func{partIndex.Item.PartName}";
                         sb.Append("                ", fullNamePart.ModeTypeName, ".", partIndex.Item.ModeEnumValueName, " => ");
                         if (partIndex.Item.iType == iTypeOptional) {
-                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(defaultValue) : defaultValue,");
+                            //sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(defaultValue) : defaultValue,");
+                            sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.", partIndex.Item.PartName, ", defaultValue) : defaultValue,");
                         } else if (partIndex.Item.iType == iTypeValue) {
                             sb.AppendLine("(", funcName, " is not null) ? ", funcName, "(this.", partIndex.Item.PartName, ", defaultValue) : defaultValue,");
                         } else if (partIndex.Item.iType == iTypeFailure) {

@@ -1,6 +1,8 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
-public interface IDatum<T> {
+public interface IDatum { }
+
+public interface IDatum<T> : IDatum {
     T Value { get; }
 
     //void Deconstruct(out T Value);

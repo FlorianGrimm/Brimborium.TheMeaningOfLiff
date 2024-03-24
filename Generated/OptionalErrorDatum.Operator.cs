@@ -26,12 +26,12 @@ public readonly partial record struct OptionalErrorDatum {
 
     public OptionalErrorDatum Then(
         OptionalErrorDatum defaultValue,
-        Func<OptionalErrorDatum, OptionalErrorDatum>? funcOptionalDatum = default,
+        Func<NoDatum, OptionalErrorDatum, OptionalErrorDatum>? funcOptionalDatum = default,
         Func<ErrorDatum, OptionalErrorDatum, OptionalErrorDatum>? funcErrorDatum = default
         ) {
         try {
             return (this.Mode) switch {
-                OptionalErrorMode.NoValue => (funcOptionalDatum is not null) ? funcOptionalDatum(defaultValue) : defaultValue,
+                OptionalErrorMode.NoValue => (funcOptionalDatum is not null) ? funcOptionalDatum(this.OptionalDatum, defaultValue) : defaultValue,
                 OptionalErrorMode.Error => (funcErrorDatum is not null) ? funcErrorDatum(this.ErrorDatum, defaultValue) : this.ErrorDatum,
             _ => defaultValue
             };

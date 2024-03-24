@@ -14,7 +14,7 @@ public readonly partial record struct ValueErrorDatum<V>(
     ValueErrorMode Mode,
     ValueDatum<V> ValueDatum,
     ErrorDatum ErrorDatum
-) : IWithMeaning, ILogicalTimestamp {
+) : IDatum, IWithMeaning, ILogicalTimestamp {
     private string GetDebuggerDisplay() => this.ToString();
 
     public Meaning? Meaning => this.Mode switch {

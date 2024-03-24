@@ -26,12 +26,12 @@ public readonly partial record struct OptionalValueDatum<V> {
 
     public OptionalValueDatum<OV> Then<OV>(
         OptionalValueDatum<OV> defaultValue,
-        Func<OptionalValueDatum<OV>, OptionalValueDatum<OV>>? funcOptionalDatum = default,
+        Func<NoDatum, OptionalValueDatum<OV>, OptionalValueDatum<OV>>? funcOptionalDatum = default,
         Func<ValueDatum<V>, OptionalValueDatum<OV>, OptionalValueDatum<OV>>? funcValueDatum = default
         ) {
         {
             return (this.Mode) switch {
-                OptionalValueMode.NoValue => (funcOptionalDatum is not null) ? funcOptionalDatum(defaultValue) : defaultValue,
+                OptionalValueMode.NoValue => (funcOptionalDatum is not null) ? funcOptionalDatum(this.OptionalDatum, defaultValue) : defaultValue,
                 OptionalValueMode.Value => (funcValueDatum is not null) ? funcValueDatum(this.ValueDatum, defaultValue) : defaultValue,
             _ => defaultValue
             };

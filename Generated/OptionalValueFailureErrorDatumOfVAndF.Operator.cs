@@ -44,14 +44,14 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F> {
 
     public OptionalValueFailureErrorDatum<OV, OF> Then<OV, OF>(
         OptionalValueFailureErrorDatum<OV, OF> defaultValue,
-        Func<OptionalValueFailureErrorDatum<OV, OF>, OptionalValueFailureErrorDatum<OV, OF>>? funcOptionalDatum = default,
+        Func<NoDatum, OptionalValueFailureErrorDatum<OV, OF>, OptionalValueFailureErrorDatum<OV, OF>>? funcOptionalDatum = default,
         Func<ValueDatum<V>, OptionalValueFailureErrorDatum<OV, OF>, OptionalValueFailureErrorDatum<OV, OF>>? funcValueDatum = default,
         Func<FailureDatum<F>, OptionalValueFailureErrorDatum<OV, OF>, OptionalValueFailureErrorDatum<OV, OF>>? funcFailureDatum = default,
         Func<ErrorDatum, OptionalValueFailureErrorDatum<OV, OF>, OptionalValueFailureErrorDatum<OV, OF>>? funcErrorDatum = default
         ) {
         try {
             return (this.Mode) switch {
-                OptionalValueFailureErrorMode.NoValue => (funcOptionalDatum is not null) ? funcOptionalDatum(defaultValue) : defaultValue,
+                OptionalValueFailureErrorMode.NoValue => (funcOptionalDatum is not null) ? funcOptionalDatum(this.OptionalDatum, defaultValue) : defaultValue,
                 OptionalValueFailureErrorMode.Value => (funcValueDatum is not null) ? funcValueDatum(this.ValueDatum, defaultValue) : defaultValue,
                 OptionalValueFailureErrorMode.Failure => (funcFailureDatum is not null) ? funcFailureDatum(this.FailureDatum, defaultValue) : defaultValue,
                 OptionalValueFailureErrorMode.Error => (funcErrorDatum is not null) ? funcErrorDatum(this.ErrorDatum, defaultValue) : this.ErrorDatum,

@@ -8,7 +8,7 @@ namespace Brimborium.TheMeaningOfLiff;
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly partial record struct NoDatum(
     Meaning? Meaning = default,
-    long LogicalTimestamp = 0) {
+    long LogicalTimestamp = 0) : IDatum {
 
     public override string ToString() => string.Empty;
 

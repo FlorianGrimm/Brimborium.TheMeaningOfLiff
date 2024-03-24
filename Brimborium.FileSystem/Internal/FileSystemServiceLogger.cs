@@ -11,7 +11,7 @@ public static partial class FileSystemServiceLogger {
         Message = "{Result} via {listFlowCondition}")]
     public static partial void TraceWriteAllTextAsyncResult(
         this ILogger logger,
-        OptionalDatumError<bool> result,
+        OptionalValueErrorDatum<bool> result,
         FlowCondition[] listFlowCondition
         );
 
@@ -22,7 +22,7 @@ public static partial class FileSystemServiceLogger {
         Message = "{Result} via {listFlowCondition}")]
     public static partial void WarningWriteAllTextAsyncResult(
         this ILogger logger,
-        OptionalDatumError<bool> result,
+        OptionalValueErrorDatum<bool> result,
         FlowCondition[] listFlowCondition
         );
 }

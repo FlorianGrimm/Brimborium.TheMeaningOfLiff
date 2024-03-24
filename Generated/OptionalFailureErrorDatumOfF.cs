@@ -16,7 +16,7 @@ public readonly partial record struct OptionalFailureErrorDatum<F>(
     NoDatum OptionalDatum,
     FailureDatum<F> FailureDatum,
     ErrorDatum ErrorDatum
-) : IWithMeaning, ILogicalTimestamp {
+) : IDatum, IWithMeaning, ILogicalTimestamp {
     private string GetDebuggerDisplay() => this.ToString();
 
     public Meaning? Meaning => this.Mode switch {
