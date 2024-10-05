@@ -1,16 +1,6 @@
 ﻿namespace Brimborium.TheMeaningOfLiff;
 
-public interface ITransformation<I, O>
-    //where I : struct, IDatum
-    //where O : struct, IDatum 
-    {
-    O Then(I arg);
-}
 
-
-public interface ITransformationAsync<I, O> {
-    ValueTask<O> ExecuteAsync(I arg);
-}
 
 public class DoBlaBla
     : ITransformation<OptionalValueDatum<string>, OptionalValueDatum<int>> {
@@ -57,7 +47,7 @@ public partial record struct TransformationDelegateOptionalValueDatum<V, TResult
 
 public partial record class TransformationOptionalValueDatum<V, O>(
     O DefaultValue
-    ) 
+    )
     //where O : struct, IDatum 
     {
 

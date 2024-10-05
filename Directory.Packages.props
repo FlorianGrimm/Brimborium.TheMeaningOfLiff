@@ -23,7 +23,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.0-preview.1.23557.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageVersion Include="Microsoft.Orleans.Core.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Orleans.Core.Abstractions" Version="8.2.0" />
     <PackageVersion Include="OpenTelemetry.Api" Version="1.7.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="1.7.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.7.0" />
@@ -33,9 +33,9 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.7.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.7.0" />
     <PackageVersion Include="PolySharp" Version="1.14.1" />
-    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="8.2.0" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
-    <PackageVersion Include="System.Text.Json" Version="8.0.3" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.4" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7" />
     <PackageVersion Include="xunit" Version="2.7.0" />

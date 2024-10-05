@@ -41,10 +41,10 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             // System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
             //System.Console.Out.WriteLine($"dict[{i}] = new FullNamePart({i},[{csvName}]);");
         }
-        NamePart namePartOptional = new(iTypeOptional, typeof(Brimborium.TheMeaningOfLiff.NoDatum), "OptionalDatum", "optional", "NoValue", "NoDatum", "", "NoDatum");
-        NamePart namePartValue = new(iTypeValue, typeof(Brimborium.TheMeaningOfLiff.ValueDatum<>), "ValueDatum", "value", "Value", "ValueDatum<V>", "V", "ValueDatumOfV");
-        NamePart namePartFailure = new(iTypeFailure, typeof(Brimborium.TheMeaningOfLiff.FailureDatum<>), "FailureDatum", "failure", "Failure", "FailureDatum<F>", "F", "FailureDatumOfF");
-        NamePart namePartError = new(iTypeError, typeof(Brimborium.TheMeaningOfLiff.ErrorDatum), "ErrorDatum", "error", "Error", "ErrorDatum", "", "ErrorDatum");
+        NamePart namePartOptional = new(iType: iTypeOptional, Type: typeof(Brimborium.TheMeaningOfLiff.NoDatum), PartName: "OptionalDatum", ArgName: "optional", ModeEnumValueName: "NoValue", ClassName: "NoDatum", GenericTypeArgName: "", FileName: "NoDatum");
+        NamePart namePartValue = new(iType: iTypeValue, Type: typeof(Brimborium.TheMeaningOfLiff.ValueDatum<>), PartName: "ValueDatum", ArgName: "value", ModeEnumValueName: "Value", ClassName: "ValueDatum<V>", GenericTypeArgName: "V", FileName: "ValueDatumOfV");
+        NamePart namePartFailure = new(iType: iTypeFailure, Type: typeof(Brimborium.TheMeaningOfLiff.FailureDatum<>), PartName: "FailureDatum", ArgName: "failure", ModeEnumValueName: "Failure", ClassName: "FailureDatum<F>", GenericTypeArgName: "F", FileName: "FailureDatumOfF");
+        NamePart namePartError = new(iType: iTypeError, Type: typeof(Brimborium.TheMeaningOfLiff.ErrorDatum), PartName: "ErrorDatum", ArgName: "error", ModeEnumValueName: "Error", ClassName: "ErrorDatum", GenericTypeArgName: "", FileName: "ErrorDatum");
 
         List<NamePart> listAllParts = [
             namePartOptional,
@@ -192,6 +192,7 @@ public readonly partial record struct OptionalValueFailureErrorDatum<V, F>(
             if (fullNamePart.Parts.Length == 1) {
                 // System.Console.WriteLine(fullNamePart.ClassName);
             } else {
+                var file = new CSharpFile();
                 StringBuilder sb = getFile($"{fullNamePart.FileName}.cs");
                 //System.Console.WriteLine(fullNamePart.FileName);
                 //System.Console.WriteLine(fullNamePart.ClassName);
